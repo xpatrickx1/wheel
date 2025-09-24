@@ -3,14 +3,14 @@ import { supabase } from '../lib/supabaseClient';
 import { Header } from '../components/Header';
 import { CreateWidgetModal } from '../components/CreateWidgetModal';
 import { WidgetSettingsModal } from '../components/SettingsModal';
-import { WidgetSettings } from '../lib/defaultSettings';
+import { defaultWidgetSettings, WidgetSettings } from '../lib/defaultSettings';
 import { Eye, Funnel, Settings } from 'lucide-react';
 
 interface Widget {
   id: string;
   name: string;
   created_at: string;
-  is_active?: boolean; 
+  is_active?: boolean;
   settings?: WidgetSettings;
 }
 
@@ -19,10 +19,9 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
-  const [widgetId, setWidgetId] = useState('');
+  const [widgetId, setWidgetId] = useState<string | null>(null); // Змінено на null для кращої типізації
   const [widgetName, setWidgetName] = useState('');
   const [user, setUser] = useState<any>(null);
-
 
   useEffect(() => {
     async function getUser() {
@@ -38,7 +37,7 @@ export default function Dashboard() {
       try {
         const { data, error } = await supabase
           .from('widgets')
-          .select('id, name, created_at, is_active, settings') 
+          .select('id, name, created_at, is_active, settings')
           .eq('user_id', user?.id);
 
         if (error) throw error;
@@ -59,10 +58,21 @@ export default function Dashboard() {
     if (!widgetName.trim() || !user?.id) return;
 
     try {
-      const { createWidget } = await import('../lib/widgets');
-      const newWidget = await createWidget(widgetName.trim());
-      
-      setWidgets([newWidget, ...widgets]);
+      const { data, error } = await supabase
+        .from('widgets')
+        .insert([
+          {
+            name: widgetName.trim(),
+            user_id: user.id,
+            is_active: true,
+            settings: defaultWidgetSettings, // Додаємо дефолтні налаштування
+          },
+        ])
+        .select();
+
+      if (error) throw error;
+
+      setWidgets([...(data as Widget[]), ...widgets]); // Додаємо новий віджет на початок
       setWidgetName('');
       setIsCreateModalOpen(false);
     } catch (error) {
@@ -79,7 +89,6 @@ export default function Dashboard() {
 
       if (error) throw error;
 
-      // Оновлюємо локальний стан
       setWidgets((prev) =>
         prev.map((widget) =>
           widget.id === widgetId ? { ...widget, is_active: !isActive } : widget
@@ -91,31 +100,41 @@ export default function Dashboard() {
   };
 
   const handleOpenRequests = (widgetId: string) => {
-    // Логіка для відкриття заявок (наприклад, navigate(`/widgets/${widgetId}/requests`))
     console.log(`Open requests for widget ${widgetId}`);
+    // Логіка для navigate(`/widgets/${widgetId}/requests`) з useNavigate, якщо потрібно
   };
 
   const handleOpenSettings = (widgetId: string) => {
-    setIsSettingsModalOpen(true);
     setWidgetId(widgetId);
+    setIsSettingsModalOpen(true); 
+    // console.log(widgets);
   };
 
   const handleSaveSettings = async (newSettings: WidgetSettings) => {
+    if (!widgetId) return;
+
     try {
-      const { error } = await supabase
-        .from("widgets")
+      const { data, error } = await supabase
+        .from('widgets')
         .update({ settings: newSettings })
-        .eq("id", widgetId);
-  
+        .eq('id', widgetId)
+        .select();
+
       if (error) throw error;
-  
-      console.log("Settings saved for widget:", widgetId);
-      setIsSettingsModalOpen(false);
-    } catch (error: any) {
-      console.error("Error saving settings:", error.message);
+
+      setWidgets((prev) =>
+        prev.map((widget) =>
+          widget.id === widgetId ? { ...widget, settings: newSettings } : widget
+        )
+      );
+      setIsSettingsModalOpen(false); // Закриваємо модалку після збереження
+    } catch (error) {
+      console.error('Error saving settings:', error.message);
     }
   };
-  const widget = widgets.find((w) => w.id === widgetId);
+
+  const currentWidget = widgets.find((w) => w.id === widgetId);
+
   return (
     <>
       <Header />
@@ -132,12 +151,11 @@ export default function Dashboard() {
                 className="flex items-center justify-between p-4 bg-gray-700 rounded-lg shadow hover:bg-gray-600 transition pointer"
               >
                 <div className="flex items-center space-x-2">
-                  
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input
                       type="checkbox"
                       checked={widget.is_active || false}
-                      onChange={(e) => handleToggleWidget(widget.id, widget.is_active || false)}
+                      onChange={() => handleToggleWidget(widget.id, widget.is_active || false)}
                       className="sr-only peer"
                     />
                     <div className="relative w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-gray-300 after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
@@ -147,28 +165,28 @@ export default function Dashboard() {
                   </span>
                 </div>
                 <div className="flex items-center justify-end space-x-2 flex-1">
-                  <a 
-                    href={`/widgets/${widget.id}`} 
-                    className="flex items-center space-x-2 text-blue-500">
-                    <span className="text-blue-400"><Eye /></span>
+                  <a
+                    href={`/widgets/${widget.id}`}
+                    className="flex items-center space-x-2 text-blue-500"
+                  >
+                    <span className="text-blue-400"><Eye size={16} /></span>
                     <span className="text-white">Відкрити</span>
                   </a>
                   <a
                     onClick={() => handleOpenRequests(widget.id)}
                     className="flex items-center space-x-2 text-white hover:text-blue-300 text-sm"
                   >
-                    <span className="text-blue-400"><Funnel /></span>
+                    <span className="text-blue-400"><Funnel size={16} /></span>
                     <span className="text-white">Відкрити заявки</span>
                   </a>
                   <a
                     onClick={() => handleOpenSettings(widget.id)}
                     className="flex items-center space-x-2 text-green-400 hover:text-green-300 text-sm"
                   >
-                    <span className="text-blue-400"><Settings /></span>
+                    <span className="text-blue-400"><Settings size={16} /></span>
                     <span className="text-white">Налаштування</span>
                   </a>
                 </div>
-                
               </li>
             ))}
           </ul>
@@ -191,21 +209,17 @@ export default function Dashboard() {
           onCreateWidget={handleCreateWidget}
         />
 
-        {isSettingsModalOpen && (
+        {isSettingsModalOpen && currentWidget && (
           <WidgetSettingsModal
-            widgetId={widgetId}
+            widgetId={widgetId || ''}
             onSave={handleSaveSettings}
+            initialSettings={currentWidget.settings || defaultWidgetSettings}
+            onClose={() => {
+              setIsSettingsModalOpen(false);
+              setWidgetId(null); 
+            }}
           />
         )}
-        
-        {/* <WidgetSettingsModal
-          isOpen={isSettingsModalOpen}
-          onClose={() => setIsSettingsModalOpen(false)}
-          widgetId={widgetId}
-          onSave={handleSaveSettings}
-          widgetId={widgetId}
-        /> */}
-        
       </div>
     </>
   );

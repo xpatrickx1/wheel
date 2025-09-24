@@ -10,6 +10,13 @@ export interface WidgetSettings {
   buttonText: string;
   callFilter: string;
   actionButton: string;
+  bonuses: string[];
+  integrations: {
+    telegram: string;
+    googleAnalytics: string;
+  };
+  code: string;
+  link: string;
 }
 
 export const defaultWidgetSettings: WidgetSettings = {
@@ -23,5 +30,12 @@ export const defaultWidgetSettings: WidgetSettings = {
   phoneRegion: "Ukraine (+380)",
   buttonText: "Крутить!",
   callFilter: "Фильтр отключен",
-  actionButton: "Кнопка отключена"
+  actionButton: "Кнопка отключена",
+  bonuses: ["Бонус #1", "Бонус #2", "", "", "", "", "", ""],
+  integrations: {
+    telegram: "",
+    googleAnalytics: ""
+  },
+  code: "",
+  link: ""
 };
