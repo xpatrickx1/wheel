@@ -12,7 +12,7 @@ export default Tabs;
 
 const TabsList = ({ children }: { children: React.ReactNode }) => {
     return (
-        <div className="flex border-b border-gray-600 mb-4">
+        <div className="flex justify-center mb-4">
             {children}
         </div>
     )
@@ -20,22 +20,22 @@ const TabsList = ({ children }: { children: React.ReactNode }) => {
 
 const TabsTrigger = ({ children, value, isActive, onClick }: { children: React.ReactNode, value?: string, isActive?: boolean, onClick?: () => void }) => {
     return (
-        <button
+        <div
             onClick={onClick}
-            className={`px-4 py-2 text-sm font-medium transition-colors ${
+            className={`px-4 py-2 text-sm font-medium transition-colors cursor-pointer ${
                 isActive 
-                    ? 'bg-blue-600 text-white border-b-2 border-blue-600' 
-                    : 'text-gray-400 hover:text-white hover:bg-gray-700'
+                    ? 'text-white' 
+                    : 'text-gray-400'
             }`}
         >
             {children}
-        </button>
+        </div>
     )
 }
 
 const TabsContent = ({ children, value }: { children: React.ReactNode, value?: string }) => {
     return (
-        <div>
+        <div className='w-full'>
             {children}
         </div>
     )

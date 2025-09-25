@@ -34,7 +34,7 @@ export default function SignIn() {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       if (session) {
-        navigate('/dashboard'); // Перенаправлення після логіну
+        navigate('/dashboard'); 
       }
     });
 

@@ -23,7 +23,7 @@ export const WidgetSettingsModal = ({
 }) => {
   const [settings, setSettings] = useState<WidgetSettings>({ ...initialSettings }); // Копіюємо початкові налаштування
   const [activeTab, setActiveTab] = useState<string>("main");
-    console.log(settings);
+
   // Оновлення стану settings на основі даних від вкладених компонентів
   const handleUpdateSettings = (updatedSettings: Partial<WidgetSettings>) => {
     setSettings((prev) => ({ ...prev, ...updatedSettings }));
@@ -46,50 +46,50 @@ export const WidgetSettingsModal = ({
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50">
-      <div className="bg-[#1a1d2e] text-white p-6 rounded-lg w-[400px] max-h-[90vh] overflow-y-auto relative">
+    <div className="fixed inset-0 flex items-center justify-center bg-black/70 bg-opacity-70 z-50">
+      <div className="flex flex-col justify-between bg-[#1a1d2e] p-6 pt-12 pb-[7rem] rounded-lg w-[500px] max-h-[90vh] overflow-y-auto relative">
         {/* Кнопка закриття */}
-        <button
+        <div
           onClick={onClose}
-          className="absolute right-4 top-4 w-10 h-10 border-none outline-none hover:border-none bg-transparent flex items-center justify-center group"
+          className="absolute right-4 top-4 w-10 h-10 border-none outline-none hover:border-none bg-transparent flex items-center justify-center group cursor-pointer"
         >
           <span className="absolute w-5 h-0.5 bg-gray-400 group-hover:bg-gray-600 transition-all duration-200 rotate-45"></span>
           <span className="absolute w-5 h-0.5 bg-gray-400 group-hover:bg-gray-600 transition-all duration-200 -rotate-45"></span>
-        </button>
+        </div>
 
         {/* Заголовок */}
         <h2 className="text-2xl font-bold mb-4 text-center">Настройки</h2>
 
         {/* Таби */}
         <Tabs className="w-full mb-4">
-          <TabsList className="flex justify-around">
+          <TabsList>
             <TabsTrigger
               value="main"
               isActive={activeTab === "main"}
               onClick={() => setActiveTab("main")}
             >
-              Основные
+              основные
             </TabsTrigger>
             <TabsTrigger
               value="bonus"
               isActive={activeTab === "bonus"}
               onClick={() => setActiveTab("bonus")}
             >
-              Бонусы
+              бонусы
             </TabsTrigger>
             <TabsTrigger
               value="integrations"
               isActive={activeTab === "integrations"}
               onClick={() => setActiveTab("integrations")}
             >
-              Интеграции
+              интеграции
             </TabsTrigger>
             <TabsTrigger
               value="code"
               isActive={activeTab === "code"}
               onClick={() => setActiveTab("code")}
             >
-              Код
+              код
             </TabsTrigger>
           </TabsList>
         </Tabs>
@@ -98,10 +98,8 @@ export const WidgetSettingsModal = ({
         {activeTab === "main" && (
           <TabsContent value="main">
             <TabMainSettings
-              onUpdate={handleUpdateSettings} // Нова функція для оновлення
-              widgetId={widgetId}
-              onClose={onClose}
-              settings={settings} // Передаємо поточні налаштування
+              onUpdate={handleUpdateSettings} 
+              settings={settings} 
             />
           </TabsContent>
         )}
@@ -109,8 +107,6 @@ export const WidgetSettingsModal = ({
           <TabsContent value="bonus">
             <TabBonus
               onUpdate={handleUpdateSettings}
-              widgetId={widgetId}
-              onClose={onClose}
               settings={settings}
             />
           </TabsContent>
@@ -119,8 +115,6 @@ export const WidgetSettingsModal = ({
           <TabsContent value="integrations">
             <TabIntegrations
               onUpdate={handleUpdateSettings}
-              widgetId={widgetId}
-              onClose={onClose}
               settings={settings}
             />
           </TabsContent>
@@ -129,20 +123,20 @@ export const WidgetSettingsModal = ({
           <TabsContent value="code">
             <TabCode
               onUpdate={handleUpdateSettings}
-              widgetId={widgetId}
-              onClose={onClose}
               settings={settings}
             />
           </TabsContent>
         )}
 
         {/* Кнопка збереження */}
+        {activeTab !== "code" && (
         <button
           onClick={handleSubmit}
-          className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-200"
+          className="button__main fixed bottom-20 m-auto w-fit bg-blue-600 hover:bg-blue-700 text-white font-bold -translate-x-1/2 left-1/2  uppercase"
         >
           Зберегти
         </button>
+        )}
       </div>
     </div>
   );

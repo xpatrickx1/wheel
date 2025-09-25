@@ -14,7 +14,7 @@ export default function Winwheel(options, drawWheel)
         'rotationAngle'     : 0,            // The angle of rotation of the wheel - 0 is 12 o'clock position.
         'textFontFamily'    : 'Arial',      // Segment text font, you should use web safe fonts.
         'textFontSize'      : 20,           // Size of the segment text.
-        'textFontWeight'    : 'normal',       // Font weight.
+        'textFontWeight'    : 'bold',       // Font weight.
         'textOrientation'   : 'horizontal', // Either horizontal, vertical, or curved.
         'textAlignment'     : 'center',     // Either center, inner, or outer.
         'textDirection'     : 'normal',     // Either normal or reversed. In normal mode for horizontal text in segment at 3 o'clock is correct way up, in reversed text at 9 o'clock segment is correct way up.

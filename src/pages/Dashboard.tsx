@@ -127,7 +127,7 @@ export default function Dashboard() {
           widget.id === widgetId ? { ...widget, settings: newSettings } : widget
         )
       );
-      setIsSettingsModalOpen(false); // Закриваємо модалку після збереження
+      setIsSettingsModalOpen(false); 
     } catch (error) {
       console.error('Error saving settings:', error.message);
     }

@@ -10,7 +10,10 @@ export interface WidgetSettings {
   buttonText: string;
   callFilter: string;
   actionButton: string;
-  bonuses: string[];
+  bonuses: {
+    value: string;
+    is_participating: boolean;
+  }[];
   integrations: {
     telegram: string;
     googleAnalytics: string;
@@ -31,7 +34,33 @@ export const defaultWidgetSettings: WidgetSettings = {
   buttonText: "Крутить!",
   callFilter: "Фильтр отключен",
   actionButton: "Кнопка отключена",
-  bonuses: ["Бонус #1", "Бонус #2", "", "", "", "", "", ""],
+  bonuses: [
+    {
+      value: "Бонус #1",
+      is_participating: true
+    }, {
+      value: "Бонус #2",
+      is_participating: true
+    }, {
+      value: "",
+      is_participating: false
+    }, {
+      value: "",
+      is_participating: false
+    }, {
+      value: "",
+      is_participating: false
+    }, {
+      value: "",
+      is_participating: false
+    }, {
+      value: "",
+      is_participating: false
+    }, {
+      value: "",
+      is_participating: false
+    },
+  ],
   integrations: {
     telegram: "",
     googleAnalytics: ""

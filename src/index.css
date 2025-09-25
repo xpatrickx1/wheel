@@ -40,6 +40,7 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  color: #99A1BA;
 }
 
 h1 {
@@ -47,24 +48,28 @@ h1 {
   line-height: 1.1;
 }
 
+input {
+  color: #ffffff;
+  font-size: 16px
+}
 
-
-button {
+.button__main {
   border-radius: 0;
   border: 1px solid transparent;
-  padding: 0.3em 1.2em;
+  padding: 0.7em 2em;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
   background-color: #4a61dd;
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: all 0.3s;
 }
-button:hover {
-  border-color: #646cff;
+
+.button__main:hover {
+  background-color: #646cff;
 }
-button:focus,
-button:focus-visible {
+.button__main:focus,
+.button__main:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
@@ -98,4 +103,255 @@ button:focus-visible {
   border-bottom: 15px solid transparent; /* Нижня невидима границя */
   border-right: 40px solid rgb(255, 255, 255);         /* Права стрілка (видима частина) */
   display: inline-block;                 /* Для розміщення в рядку, якщо потрібно */
+}
+
+.checkbox {
+  font-size: 13px;
+  font-weight: 400;
+  color: #99A1BA;
+  position: relative;
+  padding-left: 27px;
+  line-height: 0em;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  margin-top: 7px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox-min {
+  height: 14px;
+  padding-left: 21px;
+}
+
+.checkbox:before, .radio:before {
+  content: '';
+  width: 20px;
+  height: 20px;
+  border: 1px solid #3F455A;
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-radius: 5px;
+}
+
+.checkbox-min:before {
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+}
+
+
+.peer-checked:after, .checkbox-checked:after {
+  content: "";
+  position: absolute;
+  color: white;
+  font-size: 0.75rem;
+  left: 50%;
+  top: 50%;
+  background: #4A61DA url(../img/tick.svg) center center no-repeat;
+  transform: translate(-50%, -50%);
+}
+
+
+
+
+
+
+
+
+.widget-wheel-wrap {
+  position: relative;
+  width: 500px;
+  height: 500px;
+  /* left: -250px; */
+  background: #aaa;
+  border-radius: 1000px;
+}
+
+.widget-wheel-wrap * {
+  box-sizing: border-box;
+  line-height: 1;
+  text-align: left;
+}
+
+.widget-wheel-center {
+  position: absolute;
+  width: 20%;
+  height: 20%;
+  left: 40%;
+  top: 40%;
+  background: #fff;
+  border-radius: 1000px;
+  z-index: 100;
+  box-shadow: -1px 1px 7px #888;
+}
+
+.widget-wheel-wrap * {
+  box-sizing: border-box;
+  line-height: 1;
+  text-align: left;
+}
+
+.widget-wheel-arrow {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 14px 40px 14px 0;
+  border-color: transparent #fff transparent transparent;
+  -webkit-filter: drop-shadow(-3px 3px 3px rgba(0, 0, 0, .2));
+  filter: drop-shadow(-3px 3px 3px rgba(0, 0, 0, .2));
+  position: absolute;
+  right: -8px;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  z-index: 100;
+}
+
+.widget-wheel-wait {
+  animation: 30s 
+linear infinite anim-spin-onload;
+}
+
+.widget-wheel-wrap * {
+  box-sizing: border-box;
+  line-height: 1;
+  text-align: left;
+}
+.widget-wheel {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  animation-duration: 6.5s;
+  animation-iteration-count: 1;
+  animation-timing-function: 
+ease-out;
+  animation-fill-mode: forwards;
+  transform: rotate(-22.5deg);
+}
+
+.widget-wheel-inner {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 0 solid #fff;
+}
+
+.widget-wheel-inner .widget-wheel-part {
+  position: absolute;
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+}
+.widget-wheel-inner .widget-wheel-part~.widget-wheel-part {
+  left: 50%;
+}
+.widget-wheel-inner .widget-wheel-part~.widget-wheel-part>div {
+  left: -100%;
+}
+
+.widget-wheel-inner .widget-wheel-part>div {
+  position: absolute;
+  width: 200%;
+  height: 100%;
+}
+
+.widget-wheel-inner .widget-wheel-slice-1 {
+  background-image: linear-gradient(-45deg, transparent 50%, transparent 50%), linear-gradient(-90deg, transparent 50%, #de051e 50%);
+}
+
+.widget-wheel-inner .widget-wheel-slice-2 {
+  background-image: linear-gradient(0deg, transparent 50%, transparent 50%), linear-gradient(-45deg, transparent 50%, #eb112a 50%);
+}
+
+.widget-wheel-inner .widget-wheel-slice-3 {
+  background-image: linear-gradient(45deg, transparent 50%, transparent 50%), linear-gradient(0deg, transparent 50%, #de051e 50%);
+}
+
+.widget-wheel-inner .widget-wheel-slice-4 {
+  background-image: linear-gradient(90deg, transparent 50%, transparent 50%), linear-gradient(45deg, transparent 50%, #eb112a 50%);
+}
+.widget-wheel-inner .widget-wheel-slice-5 {
+  background-image: linear-gradient(135deg, transparent 50%, transparent 50%), linear-gradient(90deg, transparent 50%, #de051e 50%);
+}
+.widget-wheel-inner .widget-wheel-slice-6 {
+  background-image: linear-gradient(180deg, transparent 50%, transparent 50%), linear-gradient(135deg, transparent 50%, #eb112a 50%);
+}
+.widget-wheel-inner .widget-wheel-slice-7 {
+  background-image: linear-gradient(225deg, transparent 50%, transparent 50%), linear-gradient(180deg, transparent 50%, #de051e 50%);
+}
+.widget-wheel-inner .widget-wheel-slice-8 {
+  background-image: linear-gradient(270deg, transparent 50%, transparent 50%), linear-gradient(225deg, transparent 50%, #eb112a 50%);
+}
+.widget-wheel-text-1 {
+  left: 30.7%;
+  top: 96.3%;
+  transform: rotate(-67.5deg);
+  color: #fff;
+}
+.widget-wheel-text-2 {
+  left: 3.5%;
+  top: 69.1%;
+  transform: rotate(-22.5deg);
+  color: #fff;
+}
+.widget-wheel-text-3 {
+  left: 3.4%;
+  top: 30.5%;
+  transform: rotate(22.5deg);
+  color: #fff;
+}
+.widget-wheel-text-4 {
+  left: 30.9%;
+  top: 3.2%;
+  transform: rotate(67.5deg);
+  color: #fff;
+}
+.widget-wheel-text-5 {
+  left: 69.4%;
+  top: 3.5%;
+  transform: rotate(112.5deg);
+  color: #fff;
+}
+.widget-wheel-text-6 {
+  left: 96.3%;
+  top: 30.9%;
+  transform: rotate(157.5deg);
+  color: #fff;
+}
+.widget-wheel-text-7 {
+  left: 96.5%;
+  top: 69.3%;
+  transform: rotate(202.5deg);
+  color: #fff;
+}
+.widget-wheel-text-8 {
+  left: 69.2%;
+  top: 96.6%;
+  transform: rotate(247.5deg);
+  color: #fff;
+}
+.widget-wheel-text {
+  position: absolute;
+  z-index: 30;
+  transform-origin: 0 0;
+  width: 50%;
+}
+.widget-wheel-text span {
+  color: #FFFFFF;
+}
+.widget-wheel-text span {
+  position: absolute;
+  transform: translateY(-50%) rotate(180deg);
+  text-align: center;
+  display: block;
+  width: 100%;
+  padding: 0 8% 1% 36%;
+  box-sizing: border-box;
+  font-size: 16px;
+  color: #fff;
 }

@@ -5,7 +5,8 @@ import SignUp from './pages/SignUp';
 import Home from './pages/Home';
 import { Wheel } from './components/Wheel';
 import Dashboard from './pages/Dashboard';
-
+import WidgetPage from './pages/WidgetPage';
+import { Wheeltest } from './components/Wheeltest';
 function App() {
   return (
     <BrowserRouter>
@@ -15,6 +16,11 @@ function App() {
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/wheel" element={<Wheel />} />
         <Route path="/dashboard" element={<Dashboard />} />
+
+
+        {/* окремий віджет за ID */}
+        <Route path="/widgets/:id" element={<WidgetPage />} />
+        <Route path="/wheeltest" element={<Wheeltest />} />
       </Routes>
     </BrowserRouter>
   );
