@@ -68,7 +68,7 @@ export const TabMainSettings = ({
           onChange={(e) => handleChange("collectData", e.target.value)}
           className="w-full p-2 rounded bg-[#2b2f45]"
         >
-          <option value="phone">Телефон</option>
+          <option value="tel">Телефон</option>
           <option value="email">Email</option>
           <option value="message">не собираем</option>
         </select>

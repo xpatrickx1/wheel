@@ -9,7 +9,13 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
-  publicDir: "./static",
+  server: {
+    port: 5173,
+    fs: {
+      strict: false,
+    },
+  },
+  publicDir: "./public",
   base: "./",
   resolve: {
     alias: {

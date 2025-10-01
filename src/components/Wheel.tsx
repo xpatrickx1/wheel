@@ -130,6 +130,7 @@ export function Wheel({ id }: { id: string }) {
   return (
     <div className="w-full">
       <div className="flex items-center relative min-h-screen w-full overflow-hidden bg-[#262635] max-w-[1000px] mx-auto">
+          
         {/* Контейнер для колеса */}
         <div className="wheel-container relative w-fit w-[500px] max-w-[500px] -translate-x-1/2">
           <canvas ref={canvasRef} id="canvas" width="500" height="500"></canvas>

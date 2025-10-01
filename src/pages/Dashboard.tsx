@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { Header } from '../components/Header';
-import { CreateWidgetModal } from '../components/CreateWidgetModal';
-import { WidgetSettingsModal } from '../components/SettingsModal';
+import { ModalCreateWidget } from '../components/ModalCreateWidget';
+import { ModalSettings } from '../components/ModalSettings';
 import { defaultWidgetSettings, WidgetSettings } from '../lib/defaultSettings';
 import { Eye, Funnel, Settings } from 'lucide-react';
 
 interface Widget {
   id: string;
+  slug: string;
   name: string;
   created_at: string;
   is_active?: boolean;
@@ -18,7 +19,7 @@ export default function Dashboard() {
   const [widgets, setWidgets] = useState<Widget[]>([]);
   const [loading, setLoading] = useState(true);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  const [isModalSettingsOpen, setIsModalSettingsOpen] = useState(false);
   const [widgetId, setWidgetId] = useState<string | null>(null); // Змінено на null для кращої типізації
   const [widgetName, setWidgetName] = useState('');
   const [user, setUser] = useState<any>(null);
@@ -37,7 +38,7 @@ export default function Dashboard() {
       try {
         const { data, error } = await supabase
           .from('widgets')
-          .select('id, name, created_at, is_active, settings')
+          .select('id, slug, name, created_at, is_active, settings')
           .eq('user_id', user?.id);
 
         if (error) throw error;
@@ -54,29 +55,72 @@ export default function Dashboard() {
     }
   }, [user?.id]);
 
+  // const handleCreateWidget = async () => {
+  //   if (!widgetName.trim() || !user?.id) return;
+
+  //   const response = await fetch('https://ptulighepuqttsocdovp.supabase.co/functions/v1/create-widget', {
+  //     method: 'POST',
+  //     headers: { 'Content-Type': 'application/json' },
+  //     body: JSON.stringify({ name: 'My Widget', description: 'Test widget', settings: { prizes: ['Prize 1', 'Prize 2'] } }),
+  //   });
+  //   const { widget, embedCode } = await response.json();
+  //   console.log(embedCode);
+
+  //   try {
+  //     const { data, error } = await supabase
+  //       .from('widgets')
+  //       .insert([
+  //         {
+  //           name: widgetName.trim(),
+  //           user_id: user.id,
+  //           is_active: true,
+  //           settings: defaultWidgetSettings, // Додаємо дефолтні налаштування
+  //         },
+  //       ])
+  //       .select();
+
+  //     if (error) throw error;
+
+  //     setWidgets([...(data as Widget[]), ...widgets]); // Додаємо новий віджет на початок
+  //     setWidgetName('');
+  //     setIsCreateModalOpen(false);
+  //   } catch (error) {
+  //     console.error('Error creating widget:', error.message);
+  //   }
+  // };
+
   const handleCreateWidget = async () => {
-    if (!widgetName.trim() || !user?.id) return;
-
+    if (!widgetName.trim() || !user?.id) {
+      console.error("Missing widgetName or user.id");
+      return;
+    }
+    const { data: { session } } = await supabase.auth.getSession();
     try {
-      const { data, error } = await supabase
-        .from('widgets')
-        .insert([
-          {
-            name: widgetName.trim(),
-            user_id: user.id,
-            is_active: true,
-            settings: defaultWidgetSettings, // Додаємо дефолтні налаштування
-          },
-        ])
-        .select();
-
-      if (error) throw error;
-
-      setWidgets([...(data as Widget[]), ...widgets]); // Додаємо новий віджет на початок
-      setWidgetName('');
-      setIsCreateModalOpen(false);
+      const response = await fetch('https://ptulighepuqttsocdovp.supabase.co/functions/v1/create-widget', {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session?.access_token}`,
+        },
+        body: JSON.stringify({
+          name: widgetName,
+          is_active: true,
+          settings: defaultWidgetSettings,
+          user_id: user.id,
+        }),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Create widget error:", errorData);
+        throw new Error(errorData.error || `HTTP ${response.status}`);
+      }
+  
+      const { widget, embedCode } = await response.json();
+      console.log("Embed code:", embedCode);
+      // Збережіть embedCode для відображення користувачу
     } catch (error) {
-      console.error('Error creating widget:', error.message);
+      console.error("Failed to create widget:", error);
     }
   };
 
@@ -106,7 +150,7 @@ export default function Dashboard() {
 
   const handleOpenSettings = (widgetId: string) => {
     setWidgetId(widgetId);
-    setIsSettingsModalOpen(true); 
+    setIsModalSettingsOpen(true); 
     // console.log(widgets);
   };
 
@@ -127,7 +171,7 @@ export default function Dashboard() {
           widget.id === widgetId ? { ...widget, settings: newSettings } : widget
         )
       );
-      setIsSettingsModalOpen(false); 
+      setIsModalSettingsOpen(false); 
     } catch (error) {
       console.error('Error saving settings:', error.message);
     }
@@ -166,7 +210,7 @@ export default function Dashboard() {
                 </div>
                 <div className="flex items-center justify-end space-x-2 flex-1">
                   <a
-                    href={`/widgets/${widget.id}`}
+                    href={`/widgets/${widget.slug}`}
                     className="flex items-center space-x-2 text-blue-500"
                   >
                     <span className="text-blue-400"><Eye size={16} /></span>
@@ -195,13 +239,13 @@ export default function Dashboard() {
         )}
 
         <button
-          className="mt-4 bg-blue-600 rounded-lg mt-10 hover:bg-blue-700 text-white font-bold py-2 px-4 w-full md:w-auto"
+          className="mt-4 bg-blue-600 rounded-lg mt-10 hover:bg-blue-700 text-white font-bold py-2 px-4 w-full md:w-auto cursor-pointer"
           onClick={() => setIsCreateModalOpen(true)}
         >
           Новий віджет
         </button>
 
-        <CreateWidgetModal
+        <ModalCreateWidget
           isOpen={isCreateModalOpen}
           onClose={() => setIsCreateModalOpen(false)}
           widgetName={widgetName}
@@ -209,13 +253,14 @@ export default function Dashboard() {
           onCreateWidget={handleCreateWidget}
         />
 
-        {isSettingsModalOpen && currentWidget && (
-          <WidgetSettingsModal
+        {isModalSettingsOpen && currentWidget && (
+          <ModalSettings
             widgetId={widgetId || ''}
+            slug={currentWidget.slug || ''}
             onSave={handleSaveSettings}
             initialSettings={currentWidget.settings || defaultWidgetSettings}
             onClose={() => {
-              setIsSettingsModalOpen(false);
+              setIsModalSettingsOpen(false);
               setWidgetId(null); 
             }}
           />

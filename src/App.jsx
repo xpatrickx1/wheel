@@ -6,7 +6,7 @@ import Home from './pages/Home';
 import { Wheel } from './components/Wheel';
 import Dashboard from './pages/Dashboard';
 import WidgetPage from './pages/WidgetPage';
-import { Wheeltest } from './components/Wheeltest';
+import { Wheeltest } from './pages/Wheeltest';
 function App() {
   return (
     <BrowserRouter>
@@ -18,8 +18,8 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
 
 
-        {/* окремий віджет за ID */}
-        <Route path="/widgets/:id" element={<WidgetPage />} />
+        {/* окремий віджет за slug */}
+        <Route path="/widgets/:slug" element={<WidgetPage />} />
         <Route path="/wheeltest" element={<Wheeltest />} />
       </Routes>
     </BrowserRouter>

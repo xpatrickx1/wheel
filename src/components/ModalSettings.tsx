@@ -10,14 +10,16 @@ import { TabsList } from "../ui/tabs";
 import { TabsTrigger } from "../ui/tabs";
 import { TabsContent } from "../ui/tabs";
 
-export const WidgetSettingsModal = ({
+export const ModalSettings = ({
   onSave,
   widgetId,
+  slug,
   onClose,
   initialSettings,
 }: {
   onSave: (data: WidgetSettings) => void;
   widgetId: string;
+  slug: string;
   onClose: () => void;
   initialSettings: WidgetSettings;
 }) => {
@@ -124,6 +126,7 @@ export const WidgetSettingsModal = ({
             <TabCode
               onUpdate={handleUpdateSettings}
               settings={settings}
+              slug={slug}
             />
           </TabsContent>
         )}

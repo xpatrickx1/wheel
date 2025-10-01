@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface CreateWidgetModalProps {
+interface ModalCreateWidgetProps {
   isOpen: boolean;
   onClose: () => void;
   widgetName: string;
@@ -8,13 +8,13 @@ interface CreateWidgetModalProps {
   onCreateWidget: () => void;
 }
 
-export function CreateWidgetModal({
+export function ModalCreateWidget({
   isOpen,
   onClose,
   widgetName,
   setWidgetName,
   onCreateWidget,
-}: CreateWidgetModalProps) {
+}: ModalCreateWidgetProps) {
   if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -51,10 +51,10 @@ export function CreateWidgetModal({
           />
           
           <div className="flex ">
-            <button
+            <button 
               type="submit"
               disabled={!widgetName.trim()}
-              className="bg-blue-600 max-h-[50px] hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold py-1 px-4 rounded-0 transition"
+              className="bg-blue-600 max-h-[50px] hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold py-1 px-4 rounded-0 transition cursor-pointer"
             >
               Створити
             </button>

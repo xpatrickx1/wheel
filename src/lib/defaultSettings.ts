@@ -25,7 +25,7 @@ export interface WidgetSettings {
 export const defaultWidgetSettings: WidgetSettings = {
   color: "#4705fb",
   autoOpenDelay: 45,
-  collectData: "Номер телефона",
+  collectData: "tel",
   title: "Крутите колесо!",
   subtitle: "Введите свой номер телефона/email, чтобы выиграть",
   successMessage: "Поздравляем! Не пропустите звонок, мы скоро свяжемся",
