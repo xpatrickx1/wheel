@@ -1,0 +1,14 @@
+{
+  "pageTitle": "Wheel of Fortune - widget for website",
+  "toggleLang": "EN",
+  "desc": "cIncrease website conversion rate with widget. Start getting more applications.",
+  
+  "nav": {
+    "signin": "Sign in",
+    "signup": "Sign up",
+    "dashboard": "Widgets",
+    "pay": "Payment",
+    "partner": "Partnership",
+    "logout": "Logout"
+  }
+}

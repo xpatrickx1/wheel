@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import React, { useEffect, useState, useRef } from "react";
 import { supabase } from "../lib/supabaseClient";
+import createWheel from '../lib/wheelee-home';
 
 interface WidgetData {
   id: string;
@@ -35,6 +36,7 @@ export default function WidgetPage() {
         if (error) throw error;
         if (!data) throw new Error("Widget not found");
         setWidget(data);
+        
       } catch (err) {
         console.error("Error loading widget:", err);
         setWidget(null);
@@ -44,21 +46,23 @@ export default function WidgetPage() {
     }
 
     loadSettings();
+    console.log('widget', widget)
   }, [slug]);
 
   useEffect(() => {
     if (!widget?.id) return;
 
     // Передаємо id (UUID) у window.wheeleeKey
-    (window as any).wheeleeKey = widget.id;
+    (window as any).wheeleeSlug = widget.slug;
 
     if (scriptRef.current) {
       document.head.removeChild(scriptRef.current);
       scriptRef.current = null;
     }
 
+    createWheel("wheelee-container", widget.settings)
     const script = document.createElement("script");
-    script.src = `${WHEELE_URL}?${Date.now()}`; // Кеш-бастинг
+    // script.src = `${WHEELE_URL}?${Date.now()}`; // Кеш-бастинг
     script.async = true;
 
     script.onload = () => {
@@ -83,9 +87,9 @@ export default function WidgetPage() {
   if (!widget) return <p className="text-red-500">Віджет не знайдено</p>;
 
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-bold text-white">{widget.name}</h1>
-      <div id="wheelee-container" />
+    <div>
+      {/* <h1 className="text-xl font-bold text-white">{widget.name}</h1> */}
+      <div id="wheelee-container" className="flex justify-center items-center align-middle mx-auto bg-[#262635] w-full h-[100vh] max-w-[1000px]"/>
     </div>
   );
 }

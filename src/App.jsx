@@ -6,7 +6,12 @@ import Home from './pages/Home';
 import { Wheel } from './components/Wheel';
 import Dashboard from './pages/Dashboard';
 import WidgetPage from './pages/WidgetPage';
-import { Wheeltest } from './pages/Wheeltest';
+// import { Wheeltest } from './pages/Wheeltest';
+import Leads from './pages/Leads';
+import Pay from './pages/Pay';
+import Partner from './pages/Partner';
+import './i18n';
+
 function App() {
   return (
     <BrowserRouter>
@@ -16,11 +21,14 @@ function App() {
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/wheel" element={<Wheel />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/pay" element={<Pay />} />
+        <Route path="/partner" element={<Partner />} />
 
 
         {/* окремий віджет за slug */}
         <Route path="/widgets/:slug" element={<WidgetPage />} />
-        <Route path="/wheeltest" element={<Wheeltest />} />
+        <Route path="/leads/:slug" element={<Leads />} />
+        {/* <Route path="/wheeltest" element={<Wheeltest />} /> */}
       </Routes>
     </BrowserRouter>
   );

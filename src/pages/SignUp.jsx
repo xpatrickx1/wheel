@@ -4,7 +4,7 @@ import { ThemeSupa } from '@supabase/auth-ui-shared'
 
 export default function SignUp() {
   return (
-    <div className="max-w-xs mx-auto">
+    <div className="max-w-xs mx-auto pt-[10rem]">
       <Auth 
         supabaseClient={supabase} 
         appearance={{ theme: ThemeSupa }}

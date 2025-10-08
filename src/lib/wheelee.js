@@ -2,19 +2,11 @@
   try {
     let widgetId;
 
-    // Для локального тестування: Використовуємо window.wheeleeKey (id)
-    if (window.wheeleeKey) {
-      widgetId = window.wheeleeKey;
-      console.log('widgetId wheeleeKey', widgetId)
-    }
-    // Для продакшену: Конвертуємо slug у id
-    else if (window.wheeleeSlug) {
-      console.log('widgetId wheeleeSlug', widgetId)
+    if (window.wheeleeSlug) {
       const API_BASE = "https://ptulighepuqttsocdovp.supabase.co";
       const response = await fetch(`${API_BASE}/functions/v1/get-widget-id/${window.wheeleeSlug}`);
       if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       const data = await response.json();
-      console.log('get-widget-id data', data)
       if (!data.id) throw new Error("Widget ID not found");
       widgetId = data.id;
     } else {
@@ -23,10 +15,8 @@
     }
 
     const API_BASE = "https://ptulighepuqttsocdovp.supabase.co";
-
     // Підвантажуємо налаштування за id
-    // fetch(`${API_BASE}/functions/v1/get-widget/${widgetId}`)
-    fetch(`https://ptulighepuqttsocdovp.supabase.co/functions/v1/get-widget/1540b0e1-87fe-440a-9bcb-e4aa8c212f51`)
+    fetch(`${API_BASE}/functions/v1/get-widget/${widgetId}`)
       .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}: ${r.statusText}`);
         console.log('get-widget-id r', r)
@@ -34,7 +24,6 @@
       })
       .then((widget) => {
         if (!widget || widget.error) throw new Error(widget.error || "Widget not found");
-        console.log('get-widget-id widget', widget)
         createWheel({ ...widget.settings });
       })
       .catch((err) => console.error("Widget load error:", err));
@@ -66,12 +55,7 @@
         const { bonuses, color, buttonText, collectData } = options;
         const baseColor = color || '#eb112a';
         const darkerColor = darkenColor(baseColor, 20);
-        console.log('baseColor', buttonText)
-        console.log('bonuses', bonuses)
-        console.log('baseColor', document)
-        // const container = document.getElementById(containerId) ? document.getElementById(containerId) : document.body;
-        const container = document.body;
-        console.log('container', container)
+        const container = document.getElementById("wheelee-container") ? document.getElementById("wheelee-container") : document.body;
         if (!container) return;
       
         const existingWheel = document.querySelector('.widget-wheel-wrap');
@@ -81,9 +65,42 @@
         }
     
         const wheelWrap = document.createElement("div");
-        wheelWrap.className = "widget-wheel-wrap";
+        wheelWrap.className = "widget-wheel-wrap _hidden";
+        // wheelWrap.classList.add('_hidden');
         container.appendChild(wheelWrap);
-    
+        
+        const existingOpenBtn = document.querySelector('.widget-open-btn');
+        if (existingOpenBtn) {
+            console.warn('Кнопка вже існує на сторінці. Видаляю старе...');
+            existingOpenBtn.remove();
+        }
+
+        const openButton = document.createElement('div');
+        openButton.className = 'widget-open-btn';
+        openButton.textContent = 'Відкрити віджет';
+        document.body.appendChild(openButton);
+
+        openButton.addEventListener('click', () => {
+          openButton.classList.add('_hidden');
+          wheelWrap.classList.remove('_hidden');
+          wheelWrap.classList.add('_active');
+        });
+
+        setTimeout(() => {
+          wheelWrap.classList.remove('_hidden');
+        }, options.autoOpenDelay || 10000);
+
+        const closeButton = document.createElement('button');
+        closeButton.className = 'widget-close-btn';
+        closeButton.innerHTML = '✕'; 
+        wheelWrap.appendChild(closeButton);
+
+        closeButton.addEventListener('click', () => {
+          wheelWrap.classList.remove('_active');
+          openButton.classList.remove('_hidden');
+          wheelWrap.classList.add('_hidden');
+        });
+        
         const wheelForm = document.createElement("div");
         wheelForm.className = "wheel-form";
         
@@ -92,15 +109,15 @@
         canvas.height = 550;
         wheelWrap.appendChild(canvas);
         wheelWrap.appendChild(wheelForm);
-      
+
         const ctx = canvas.getContext("2d");
         if (!ctx) return;
         
         const center = canvas.width / 2;
         const radius = center - 10;
 
-        console.log('bonuses', bonuses)
-        const sliceAngle = (2 * Math.PI) / bonuses.length;
+        const activeBonuses = bonuses.filter(bonus => bonus.is_participating === true);
+        const sliceAngle = (2 * Math.PI) / activeBonuses.length;
       
         if (!stylesAdded) {
             const styles = document.createElement('style');
@@ -110,6 +127,69 @@
                     display: flex;
                     align-items: center;
                     gap: 20px;
+                    background: #212230;
+                    position: fixed;
+                    height: 100vh;
+                    width: 70%;
+                    left: 0;
+                    top: 0;
+                    transition: opacity 0.3s ease, transform 0.3s ease; 
+                    opacity: 1;
+                    transform: translateX(-100%);
+                }
+                 .widget-wheel-wrap._hidden {
+                  opacity: 0; 
+                  transform: translateX(-100%);
+                }
+                .widget-wheel-wrap._active {
+                    display: flex;
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+
+                .widget-wheel-wrap canvas {
+                  position: absolute;
+                  left: -275px;
+                }
+                .widget-open-btn {
+                  position: fixed;
+                  bottom: 20px;
+                  left: 20px;
+                  padding: 10px 20px;
+                  background-color: #ff9900;
+                  color: #fff;
+                  border: none;
+                  border-radius: 5px;
+                  cursor: pointer;
+                  font-size: 16px;
+                  z-index: 1000;
+                  transition: background-color 0.3s ease;
+                }
+                .widget-open-btn:hover {
+                    background-color: #e68a00;
+                    transform: scale(1.05);
+                }
+                .widget-open-btn._hidden {
+                  display: none;
+                }
+                .widget-close-btn {
+                  position: absolute;
+                  top: 20px;
+                  right: 20px;
+                  width: 30px;
+                  height: 30px;
+                  background-color: transparent; 
+                  border: none;
+                  color: #fff;
+                  font-size: 20px;
+                  line-height: 30px;
+                  text-align: center;
+                  cursor: pointer;
+                  transition: background-color 0.3s ease, transform 0.3s ease;
+                  z-index: 1001;
+                }
+                .widget-close-btn:hover {
+                  transform: rotate(90deg); 
                 }
                 .widget-wheel-spin-btn {
                     display: block;
@@ -146,6 +226,7 @@
                     border-radius: 5px;     
                     margin-right: 0.5rem;   
                     border: 1px solid rgba(255,255,255,.2);
+                    transition: opacity 0.4s ease, box-shadow 0.4s ease, border 0.4s ease;
                 }
     
                 .form-wrap {
@@ -192,6 +273,7 @@
                     height: 60px;
                     border-radius: 10px;
                     padding-left: 60px;
+                    transition: opacity 0.4s ease, box-shadow 0.4s ease, border 0.4s ease;
                 }
     
                 .checkbox-wrap {
@@ -234,13 +316,13 @@
                 }
     
                 .checkbox-box.error {
-                  animation: shake 0.12s ease-in-out 0s 2;
+                  animation: shake 0.12s ease-in-out 0.1s 2;
                   box-shadow: 0 0 0.5em #ff4949;
                   border: 1px solid #ff4949;
-                  transition: opacity 0.4s ease, box-shadow 0.4s ease, border 0.4s ease;
+                  transition: opacity 0.4s ease 0.1s, box-shadow 0.4s ease 0.1s, border 0.4s ease 0.1s;
                   opacity: 1;
                 }
-    
+
                 input.error {
                   animation: shake 0.12s ease-in-out 0s 2;
                   box-shadow: 0 0 0.5em #ff4949;
@@ -255,6 +337,51 @@
                   75% { transform: translateX(-4px); }
                   100% { transform: translateX(0); }
                 }
+                
+                .loader
+                  margin: 0 auto;
+                }
+
+                .dot {
+                  width: 1em;
+                  height: 1em;
+                  border-radius: 0.5em;
+                  background: #fff;
+                  position: absolute;
+                  animation-duration: 0.5s;
+                  animation-timing-function: ease;
+                  animation-iteration-count: infinite;
+                }
+
+                .dot1, .dot2 {
+                  left: 0;
+                }
+
+                .dot3 { left: 1.5em; }
+
+                .dot4 { left: 3em; }
+
+                @keyframes reveal {
+                  from { transform: scale(0.001); }
+                  to { transform: scale(1); }
+                }
+
+                @keyframes slide {
+                  to { transform: translateX(1.5em) }
+                }
+
+                .dot1 {
+                  animation-name: reveal;
+                }
+
+                .dot2, .dot3 {
+                  animation-name: slide;
+                }
+
+                .dot4 {
+                  animation-name: reveal;
+                  animation-direction: reverse;
+                }
             `;
             document.head.appendChild(styles);
             stylesAdded = true;
@@ -262,18 +389,44 @@
       
         let rotation = 0;
         let spinning = false;
-        let indicatedSegment = null;
-        let inputValue = "";
+        let prize = null;
+        let contact = "";
         let isPolicyAccepted = false;
         let isInputValid = false;
+        let idleRotation = 0;
+        let idleAnimationId = null;
       
+        function startIdleRotation(speed = 0.002) {
+          if (idleAnimationId) return;
+        
+          function animateIdle() {
+            if (spinning) {
+              idleAnimationId = null;
+              return;
+            }
+            rotation += speed;
+            if (Math.abs(rotation) > 1e6) rotation = rotation % TWO_PI;
+            drawWheel();
+            idleAnimationId = requestAnimationFrame(animateIdle);
+          }
+        
+          idleAnimationId = requestAnimationFrame(animateIdle);
+        }
+        
+        function stopIdleRotation() {
+          if (idleAnimationId) {
+            cancelAnimationFrame(idleAnimationId);
+            idleAnimationId = null;
+          }
+        }
+  
         
         function drawWheel() {
           if (!ctx) return;
           ctx.clearRect(0, 0, canvas.width, canvas.height);
           
-          bonuses.forEach((prize, i) => {
-            const startAngle = i * sliceAngle + rotation;
+          activeBonuses.forEach((prize, i) => {
+            const startAngle = i * sliceAngle + rotation + idleRotation;
             const endAngle = startAngle + sliceAngle;
             ctx.shadowColor = "rgba(0,0,0,0.2)";
             ctx.shadowBlur = 8;
@@ -297,7 +450,7 @@
             const textRadius = radius / 2;
             ctx.fillStyle = "#000";
             ctx.font = "16px Arial";
-            ctx.fillText(prize.text, textRadius + 40, 0);
+            ctx.fillText(prize.value, textRadius + 40, 0);
             ctx.restore();
     
             
@@ -329,229 +482,237 @@
         }
       
         function spin() {
-            if (spinning) return;
-            spinning = true;
-            console.log('spin', bonuses)
-            const targetIndex = Math.floor(Math.random() * bonuses.length);
-            const randomOffset = (Math.random() - 0.5) * sliceAngle * 0.8;
-          
-            const targetAngle =
-              2 * Math.PI * 5 +
-              (targetIndex * sliceAngle + sliceAngle / 2) +
-              randomOffset;
-          
-            const duration = 5000;
-            const start = performance.now();
-            const initialRotation = rotation;
-          
-            function easeInOutCubic(t) {
-                return 1 - Math.pow(1 - t, 3);
-            }
-    
-            function easeInOutShifted(t, bias = 0.4) {
-                // bias < 0.5 = швидше набирає, довше гальмує
-                if (t < bias) {
-                  return Math.pow(t / bias, 2); // швидкий розгін
-                } else {
-                //   return 1 - Math.pow((1 - t) / (1 - bias), 2); // плавне гальмування
-                  return 1 - Math.pow(1 - t, 3);
-                }
-              }
-              
-          
-            function animate(now) {
-              const elapsed = now - start;
-              const progress = Math.min(elapsed / duration, 1);
-          
-              const ease = easeInOutShifted(progress);
-              rotation = initialRotation + ease * targetAngle;
-          
-              drawWheel();
-              
-              if (progress < 1) {
-                requestAnimationFrame(animate);
+          if (spinning) return;
+          spinning = true;
+          stopIdleRotation();
+          const targetIndex = Math.floor(Math.random() * activeBonuses.length);
+          const randomOffset = (Math.random() - 0.5) * sliceAngle * 0.8;
+        
+          const targetAngle =
+            2 * Math.PI * 5 +
+            (targetIndex * sliceAngle + sliceAngle / 2) +
+            randomOffset;
+        
+          const duration = 5000;
+          const start = performance.now();
+          const initialRotation = rotation;
+        
+          function easeInOutCubic(t) {
+              return 1 - Math.pow(1 - t, 3);
+          }
+  
+          function easeInOutShifted(t, bias = 0.3) {
+              // bias < 0.5 = швидше набирає, довше гальмує
+              if (t < bias) {
+                return Math.pow(t / bias, 2); // швидкий розгін
               } else {
-                spinning = false;
-                const normalized = (rotation % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
-                const winningIndex = Math.floor(((2 * Math.PI - normalized) % (2 * Math.PI)) / sliceAngle);
-                // alert("Випав приз: " + bonuses[winningIndex].text);
-                indicatedSegment = bonuses[winningIndex].text;
-                
-                // Зберігаємо дані в базу
-                try {
-                  fetch(`${API_BASE}/save-result`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ widget_id: widgetId, contact, prize })
-                  });
-                } catch (e) {
-                  console.error('save result err', e);
-                }
-                
-                render()
+              //   return 1 - Math.pow((1 - t) / (1 - bias), 2); // плавне гальмування
+                return 1 - Math.pow(1 - t, 3);
               }
             }
-          
-            requestAnimationFrame(animate);
-        }
-      
+            
+        
+          function animate(now) {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+        
+            const ease = easeInOutShifted(progress);
+            rotation = initialRotation + ease * targetAngle;
+        
+            drawWheel();
+            
+            if (progress < 1) {
+              requestAnimationFrame(animate);
+            } else {
+              spinning = false;
+              const normalized = (rotation % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+              const winningIndex = Math.floor(((2 * Math.PI - normalized) % (2 * Math.PI)) / sliceAngle);
+              prize = activeBonuses[winningIndex].value;
+              
+              try {
+                fetch(`${API_BASE}/functions/v1/save-result`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json'},
+                  body: JSON.stringify({ widget_id: widgetId, contact, prize })
+                });
+              } catch (e) {
+                console.error('save result err', e);
+              }
+
+              render()
+            }
+          }
+        
+          requestAnimationFrame(animate);
+      }
       
         function render() {
             wheelForm.innerHTML = "";
         
-            if (!indicatedSegment) {
-              // Форма
-              const wrap = document.createElement("div");
-              wrap.className = "form-wrap";
-        
-              if (options.title) {
-                const title = document.createElement("div");
-                title.className = "form-title";
-                title.textContent = options.title;
-                wrap.appendChild(title);
+            if (spinning) {
+              const loader = document.createElement("div");
+              loader.className = "loader";
+              loader.innerHTML = `
+                <div class="dot dot1"></div>
+                <div class="dot dot2"></div>
+                <div class="dot dot3"></div>
+                <div class="dot dot4"></div>
+              `;
+              wheelForm.appendChild(loader);
+            } 
+
+            if (!spinning) {
+              if (!prize) {
+                // Форма
+                const wrap = document.createElement("div");
+                wrap.className = "form-wrap";
+          
+                if (options.title) {
+                  const title = document.createElement("div");
+                  title.className = "form-title";
+                  title.textContent = options.title;
+                  wrap.appendChild(title);
+                }
+          
+                if (options.subtitle) {
+                  const p = document.createElement("p");
+                  p.className = "form-subtitle";
+                  p.textContent = options.subtitle;
+                  wrap.appendChild(p);
+                }
+          
+                const form = document.createElement("form");
+                form.className = "form";
+                form.addEventListener("submit", e => e.preventDefault());
+          
+                // email input
+                const divInput = document.createElement("div");
+                divInput.className = "input-wrap";
+      
+              const input = document.createElement("input");
+              input.value = contact;
+              input.type = collectData === "email" ? "email" : "tel";
+              input.placeholder = collectData === "email" ? "Enter your email" : "Enter your phone";
+              input.className = "form-input";
+              input.addEventListener("input", e => contact = e.target.value);
+              divInput.appendChild(input);
+      
+              // Валідація
+              function validateInput() {
+      
+                if (collectData === "email") {
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    isInputValid = emailRegex.test(input.value.trim());
+                } else if (collectData === "tel") {
+                    const telRegex = /^\+?[0-9]{7,15}$/; // телефон з 7–15 цифр, опціонально з "+"
+                    isInputValid = telRegex.test(input.value.trim());
+                }
+      
+                
+                if (!isInputValid) {
+                    input.classList.add("error");
+      
+                    setTimeout(() => {
+                    input.classList.remove("error");
+                    }, 1000);
+                }
+      
+                return isInputValid;
               }
-        
-              if (options.subtitle) {
-                const p = document.createElement("p");
-                p.className = "form-subtitle";
-                p.textContent = options.subtitle;
-                wrap.appendChild(p);
-              }
-        
-              const form = document.createElement("form");
-              form.className = "form";
-              form.addEventListener("submit", e => e.preventDefault());
-        
-              // email input
-              const divInput = document.createElement("div");
-              divInput.className = "input-wrap";
-    
-            const input = document.createElement("input");
-            input.value = inputValue;
-            input.type = collectData === "email" ? "email" : "tel";
-            input.placeholder = collectData === "email" ? "Enter your email" : "Enter your phone";
-            input.className = "form-input";
-            input.addEventListener("input", e => inputValue = e.target.value);
-            divInput.appendChild(input);
-    
-            // Валідація
-            function validateInput() {
-    
-              if (collectData === "email") {
-                console.log("email");
-                  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                  isInputValid = emailRegex.test(input.value.trim());
-              } else if (collectData === "tel") {
-                console.log("tel");
-                  const telRegex = /^\+?[0-9]{7,15}$/; // телефон з 7–15 цифр, опціонально з "+"
-                  isInputValid = telRegex.test(input.value.trim());
-              }
-    
-              
-              if (!isInputValid) {
-                  input.classList.add("error");
-    
+      
+              function validatePolicy() {
+                if (!isPolicyAccepted) {
                   setTimeout(() => {
-                  input.classList.remove("error");
+                    box.classList.add("error");
+                  }, 200);
+                  setTimeout(() => {
+                    box.classList.remove("error");
                   }, 1000);
+                }
+      
+                return isPolicyAccepted;
               }
-    
-              return isInputValid;
-            }
-    
-            function validatePolicy() {
-              if (!isPolicyAccepted) {
-                box.classList.add("error");
-    
-                setTimeout(() => {
-                  box.classList.remove("error");
-                }, 1000);
-              }
-    
-              return isPolicyAccepted;
-            }
-    
-            input.addEventListener("blur", validateInput);
-        
-              // чекбокс
-              const divCheckWrap = document.createElement("div");
-              divCheckWrap.className = "checkbox-wrap";
-        
-              const divCheck = document.createElement("div");
-        
-              const label = document.createElement("label");
-              label.className = "form-label";
-        
-              const checkbox = document.createElement("input");
-              checkbox.type = "checkbox";
-              checkbox.className = "sr-only peer";
-              checkbox.addEventListener("change", () => {
-                isPolicyAccepted = checkbox.checked;
+      
+              input.addEventListener("blur", validateInput);
+          
+                // чекбокс
+                const divCheckWrap = document.createElement("div");
+                divCheckWrap.className = "checkbox-wrap";
+          
+                const divCheck = document.createElement("div");
+          
+                const label = document.createElement("label");
+                label.className = "form-label";
+          
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.className = "sr-only peer";
+                checkbox.addEventListener("change", () => {
+                  isPolicyAccepted = checkbox.checked;
+                  if (isPolicyAccepted) {
+                      box.classList.add("checked");
+                  }
+                  render();
+                });
+          
+                const box = document.createElement("div");
+                box.className = "checkbox-box";
                 if (isPolicyAccepted) {
-                    box.classList.add("checked");
+                  box.classList.add("checked");
                 }
-                render();
-              });
-        
-              const box = document.createElement("div");
-              box.className = "checkbox-box";
-              if (isPolicyAccepted) {
-                box.classList.add("checked");
+                checkbox.checked = isPolicyAccepted;
+      
+                label.appendChild(checkbox);
+                label.appendChild(box);
+                divCheck.appendChild(label);
+          
+                const policyText = document.createElement("div");
+                policyText.className = "policy-text";
+                policyText.innerHTML = `Я даю своё <a href="#" class="" target="_blank">Cогласие</a> на обработку персональных данных и подтверждаю ознакомление с <a href="${options.privacyUrl}" class="" target="_blank">Политикой</a> обработки персональных данных`;
+          
+                divCheckWrap.appendChild(divCheck);
+                divCheckWrap.appendChild(policyText);
+          
+                // кнопка
+                const btn = document.createElement("button");
+                btn.id = "spin_button";
+                btn.textContent = buttonText;
+                btn.className = "widget-wheel-spin-btn";
+                btn.style.backgroundColor = options.color;
+                btn.addEventListener("click", () => {
+                  if (!isPolicyAccepted || !validateInput()) {
+                    validatePolicy()
+                    validateInput()
+                    return;
+                  }
+                  spin();
+                });
+          
+                form.appendChild(divInput);
+                form.appendChild(divCheckWrap);
+                form.appendChild(btn);
+          
+                wrap.appendChild(form);
+                wheelForm.appendChild(wrap);
+              } else {
+                // Екран з результатом
+                const prizeText = document.createElement("div");
+                prizeText.className = "widget-prize-title";
+                prizeText.textContent = prize;
+          
+                const msg = document.createElement("div");
+                msg.className = "widget-prize-text";
+                msg.textContent = options.successMessage;
+          
+                wheelForm.appendChild(prizeText);
+                wheelForm.appendChild(msg);
               }
-              checkbox.checked = isPolicyAccepted;
-    
-              label.appendChild(checkbox);
-              label.appendChild(box);
-              divCheck.appendChild(label);
-        
-              const policyText = document.createElement("div");
-              policyText.className = "policy-text";
-              policyText.innerHTML = `Я даю своё <a href="#" class="" target="_blank">Cогласие</a> на обработку персональных данных и подтверждаю ознакомление с <a href="${options.privacyUrl}" class="" target="_blank">Политикой</a> обработки персональных данных`;
-        
-              divCheckWrap.appendChild(divCheck);
-              divCheckWrap.appendChild(policyText);
-        
-              // кнопка
-              const btn = document.createElement("button");
-              btn.id = "spin_button";
-              btn.textContent = buttonText;
-              btn.className = "widget-wheel-spin-btn";
-              btn.style.backgroundColor = options.color;
-              btn.addEventListener("click", () => {
-                if (!isPolicyAccepted || !validateInput()) {
-                  validatePolicy()
-                  validateInput()
-                  return;
-                }
-                spin();
-              });
-        
-              form.appendChild(divInput);
-              form.appendChild(divCheckWrap);
-              form.appendChild(btn);
-        
-              wrap.appendChild(form);
-              wheelForm.appendChild(wrap);
-            } else {
-              // Екран з результатом
-              const wrap = document.createElement("div");
-        
-              const prizeText = document.createElement("div");
-              prizeText.className = "widget-prize-title";
-              prizeText.textContent = indicatedSegment;
-        
-              const msg = document.createElement("div");
-              msg.className = "widget-prize-text";
-              msg.textContent = options.successMessage;
-        
-              wrap.appendChild(prizeText);
-              wrap.appendChild(msg);
-              wheelWrap.appendChild(wrap);
             }
         }
         render();
         drawWheel();
-      }
+        startIdleRotation();
+    }
   } catch (e) {
     console.error('widget init err', e);
   }

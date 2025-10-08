@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: Montserrat, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -36,7 +36,6 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
@@ -350,4 +349,97 @@ ease-out;
   box-sizing: border-box;
   font-size: 16px;
   color: #fff;
+}
+
+
+#wheelee-container {
+  width: 100%;
+  max-width: 1000px;
+  background: #262635;
+  height: 100vh;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.widget-wheel-wrap {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+#wheelee-container canvas {
+  position: absolute;
+  left: -275px;
+}
+
+.wheel-form {
+  position: absolute;
+  left: 325px;
+}
+
+.checked {
+  background-repeat: no-repeat;
+  background-position: center;
+  background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQiIGhlaWdodD0iMTQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+IDxwYXRoIGQ9Ik0xMS40IDVMMTAgMy42bC00IDQtMi0yTDIuNiA3IDYgMTAuNHoiIGZpbGw9IiNGRkYiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==);
+}
+
+
+body {
+  background-color: #222;
+  height: 100vh;
+}
+
+
+
+
+#pulse-loader .pulse-loader-1,
+#pulse-loader .pulse-loader-2 {
+  border-radius: 1000px
+}
+
+#pulse-loader {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  width: 100px;
+  height: 100px;
+  margin-left: -50px;
+  margin-top: -50px
+}
+
+#pulse-loader {
+  top: 25%
+}
+
+#pulse-loader>div {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-width: 7px;
+  border-style: solid;
+  border-color: #fff
+}
+
+#pulse-loader .pulse-loader-1 {
+  animation: pulse1 1s .5s ease infinite
+}
+
+#pulse-loader .pulse-loader-2 {
+  animation: pulse1 1s ease infinite
+}
+
+@keyframes pulse1 {
+  0% {
+    transform: scale(0)
+  }
+  40% {
+    transform: scale(0.3);
+    opacity: 1
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0
+  }
 }

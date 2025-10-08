@@ -1,1 +1,655 @@
-(async()=>{try{let e;if(window.wheeleeKey)e=window.wheeleeKey;else{if(!window.wheeleeSlug)return void console.error("wheeleeKey or wheeleeSlug required");{const n="https://ptulighepuqttsocdovp.supabase.co",t=await fetch(`${n}/functions/v1/get-widget-id/${window.wheeleeSlug}`);if(!t.ok)throw new Error(`HTTP ${t.status}: ${t.statusText}`);const o=await t.json();if(!o.id)throw new Error("Widget ID not found");e=o.id}}const n="https://ptulighepuqttsocdovp.supabase.co";fetch(`${n}/functions/v1/get-widget/${e}`).then((e=>{if(!e.ok)throw new Error(`HTTP ${e.status}: ${e.statusText}`);return e.json()})).then((t=>{if(!t||t.error)throw new Error(t.error||"Widget not found");let o=document.getElementById("wheelee-container");o||(o=document.createElement("div"),o.id="wheelee-container",document.body.appendChild(o)),function(t){let o=!1;function a(e){const n=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(e);return n?{r:parseInt(n[1],16),g:parseInt(n[2],16),b:parseInt(n[3],16)}:{r:0,g:0,b:0}}function r(e,n,t){return"#"+[e,n,t].map((e=>e.toString(16).padStart(2,"0"))).join("")}function i(e,n){const t=a(e),o=1-n/100;return r(Math.round(t.r*o),Math.round(t.g*o),Math.round(t.b*o))}const{prizes:s,color:l,buttonText:d,collectData:c}=t,p=l||"#eb112a",h=i(p,20),m=documet.body;if(!m)return;const u=document.querySelector(".widget-wheel-wrap");u&&(console.warn("Колесо вже існує на сторінці. Видаляю старе..."),u.remove());const f=document.createElement("div");f.className="widget-wheel-wrap",m.appendChild(f);const w=document.createElement("div");w.className="wheel-form";const g=document.createElement("canvas");g.width=550,g.height=550,f.appendChild(g),f.appendChild(w);const x=g.getContext("2d");if(!x)return;const b=g.width/2,v=b-10,y=2*Math.PI/s.length;if(!o){const e=document.createElement("style");e.id="widget-wheel-styles",e.textContent="\n                .widget-wheel-wrap {\n                    display: flex;\n                    align-items: center;\n                    gap: 20px;\n                }\n                .widget-wheel-spin-btn {\n                    display: block;\n                    padding: 15px 30px;\n                    color: white;\n                    border: none;\n                    white-space: nowrap;\n                    font-size: 18px;\n                    cursor: pointer;\n                    transition: background 0.3s;\n                    position: relative;\n                    z-index: 200;\n                    margin-top: 1rem;\n                    border-radius: 0.375rem;\n                    color: white;\n                    font-weight: bold;\n                    padding: 1rem 2rem;\n                }\n    \n                .widget-wheel-spin-btn:hover {\n                    transform: scale(1.05);\n                }\n    \n                .widget-wheel-spin-btn:disabled {\n                    background: #ccc;\n                    cursor: not-allowed;\n                    transform: none;\n                }\n    \n                .checkbox-box {\n                    width: 26px;            \n                    height: 26px;           \n                    min-width: 26px;        \n                    border-radius: 5px;     \n                    margin-right: 0.5rem;   \n                    border: 1px solid rgba(255,255,255,.2);\n                }\n    \n                .form-wrap {\n                    width: 100%;\n                    display: flex;\n                    flex-direction: column;\n                    align-items: flex-start;\n                    max-width: 400px;\n                }\n    \n                .form-title {\n                    font-size: 24px;\n                    font-weight: bold;\n                }\n    \n                .form-subtitle {\n                    font-size: 18px;\n                    margin-top: 4px;\n                    margin-top: 20px;\n                }\n    \n                .form {\n                    width: 100%;\n                    display: flex;\n                    flex-direction: column;\n                    align-items: flex-start;\n                    margin-top: 20px;\n                }\n    \n                .input-wrap {\n                    width: 100%;\n                    display: flex;\n                    flex-direction: column;\n                    align-items: flex-start;\n                }\n    \n                .form-input {\n                    width: 100%;\n                    max-width: 100%;\n                    border: 1px solid rgba(255, 255, 255, 0.1);\n                    outline: none;\n                    background-color: transparent;\n                    color: white;\n                    height: 60px;\n                    border-radius: 10px;\n                    padding-left: 60px;\n                }\n    \n                .checkbox-wrap {\n                    width: 100%;\n                    display: flex;\n                    align-items: flex-start;\n                     margin-top: 20px;\n                }\n    \n                .form-label {\n                    position: relative;\n                    cursor: pointer;\n                    display: inline-flex;\n                    align-items: center;\n                }\n    \n               .checked {\n                    background-repeat: no-repeat;\n                    background-position: center;\n                    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQiIGhlaWdodD0iMTQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+IDxwYXRoIGQ9Ik0xMS40IDVMMTAgMy42bC00IDQtMi0yTDIuNiA3IDYgMTAuNHoiIGZpbGw9IiNGRkYiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==);\n                }\n    \n                .policy-text {\n                    font-size: 12px;\n                    line-height: 16px;\n                }\n    \n                .widget-prize-title {\n                    font-size: 46px;\n                    line-height: 50px;\n                    color: white;\n                    font-weight: bold;\n                }\n    \n                .widget-prize-text {\n                    font-size: 18px;\n                    line-height: 22px;\n                    margin-top: 20px;\n                    color: white;\n                }\n    \n                .checkbox-box.error {\n                  animation: shake 0.12s ease-in-out 0s 2;\n                  box-shadow: 0 0 0.5em #ff4949;\n                  border: 1px solid #ff4949;\n                  transition: opacity 0.4s ease, box-shadow 0.4s ease, border 0.4s ease;\n                  opacity: 1;\n                }\n    \n                input.error {\n                  animation: shake 0.12s ease-in-out 0s 2;\n                  box-shadow: 0 0 0.5em #ff4949;\n                  border: 1px solid #ff4949;\n                  transition: opacity 0.4s ease, box-shadow 0.4s ease, border 0.4s ease;\n                  opacity: 1;\n                }\n    \n                @keyframes shake {\n                  0% { transform: translateX(0); }\n                  25% { transform: translateX(4px); }\n                  75% { transform: translateX(-4px); }\n                  100% { transform: translateX(0); }\n                }\n            ",document.head.appendChild(e),o=!0}let C=0,E=!1,k=null,M="",I=!1,T=!1;function N(){x&&(x.clearRect(0,0,g.width,g.height),s.forEach(((e,n)=>{const t=n*y+C,o=t+y;x.shadowColor="rgba(0,0,0,0.2)",x.shadowBlur=8,x.shadowOffsetX=0,x.shadowOffsetY=2,x.save(),x.shadowColor="transparent",x.beginPath(),x.moveTo(b,b),x.arc(b,b,v,t,o),x.fillStyle=n%2==0?p:h,x.fill(),x.save(),x.translate(b,b),x.rotate(t+y/2),x.textAlign="center",x.textBaseline="middle";const a=v/2;x.fillStyle="#000",x.font="16px Arial",x.fillText(e.text,a+40,0),x.restore()})),x.save(),x.shadowColor="rgba(0,0,0,0.2)",x.shadowBlur=8,x.shadowOffsetX=0,x.shadowOffsetY=2,x.beginPath(),x.arc(b,b,60,0,2*Math.PI),x.fillStyle="#fff",x.fill(),x.restore(),x.shadowColor="rgba(0, 0, 0, 0.2)",x.shadowBlur=3,x.shadowOffsetX=-3,x.shadowOffsetY=3,x.fillStyle="#fff",x.beginPath(),x.moveTo(b+v+7,b-15),x.lineTo(b+v+7,b+15),x.lineTo(b+v-35,b),x.closePath(),x.fill())}function P(){if(E)return;E=!0;const t=Math.floor(Math.random()*s.length),o=(Math.random()-.5)*y*.8,a=2*Math.PI*5+(t*y+y/2)+o,r=5e3,i=performance.now(),l=C;function d(e,n=.4){return e<n?Math.pow(e/n,2):1-Math.pow(1-e,3)}function c(t){const o=t-i,p=Math.min(o/r,1),h=d(p);if(C=l+h*a,N(),p<1)requestAnimationFrame(c);else{E=!1;const t=(C%(2*Math.PI)+2*Math.PI)%(2*Math.PI),o=Math.floor((2*Math.PI-t)%(2*Math.PI)/y);k=s[o].text;try{fetch(`${n}/save-result`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({widget_id:e,contact:contact,prize:prize})})}catch(e){console.error("save result err",e)}z()}}requestAnimationFrame(c)}function z(){if(w.innerHTML="",k){const o=document.createElement("div"),a=document.createElement("div");a.className="widget-prize-title",a.textContent=k;const r=document.createElement("div");r.className="widget-prize-text",r.textContent=t.successMessage,o.appendChild(a),o.appendChild(r),f.appendChild(o)}else{const i=document.createElement("div");if(i.className="form-wrap",t.title){const y=document.createElement("div");y.className="form-title",y.textContent=t.title,i.appendChild(y)}if(t.subtitle){const C=document.createElement("p");C.className="form-subtitle",C.textContent=t.subtitle,i.appendChild(C)}const s=document.createElement("form");s.className="form",s.addEventListener("submit",(e=>e.preventDefault()));const l=document.createElement("div");l.className="input-wrap";const p=document.createElement("input");function e(){if("email"===c){console.log("email");T=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(p.value.trim())}else if("tel"===c){console.log("tel");T=/^\+?[0-9]{7,15}$/.test(p.value.trim())}return T||(p.classList.add("error"),setTimeout((()=>{p.classList.remove("error")}),1e3)),T}function n(){return I||(x.classList.add("error"),setTimeout((()=>{x.classList.remove("error")}),1e3)),I}p.value=M,p.type="email"===c?"email":"tel",p.placeholder="email"===c?"Enter your email":"Enter your phone",p.className="form-input",p.addEventListener("input",(e=>M=e.target.value)),l.appendChild(p),p.addEventListener("blur",e);const h=document.createElement("div");h.className="checkbox-wrap";const m=document.createElement("div"),u=document.createElement("label");u.className="form-label";const g=document.createElement("input");g.type="checkbox",g.className="sr-only peer",g.addEventListener("change",(()=>{I=g.checked,I&&x.classList.add("checked"),z()}));const x=document.createElement("div");x.className="checkbox-box",I&&x.classList.add("checked"),g.checked=I,u.appendChild(g),u.appendChild(x),m.appendChild(u);const b=document.createElement("div");b.className="policy-text",b.innerHTML=`Я даю своё <a href="#" class="" target="_blank">Cогласие</a> на обработку персональных данных и подтверждаю ознакомление с <a href="${t.privacyUrl}" class="" target="_blank">Политикой</a> обработки персональных данных`,h.appendChild(m),h.appendChild(b);const v=document.createElement("button");v.id="spin_button",v.textContent=d,v.className="widget-wheel-spin-btn",v.style.backgroundColor=t.color,v.addEventListener("click",(()=>{if(!I||!e())return n(),void e();P()})),s.appendChild(l),s.appendChild(h),s.appendChild(v),i.appendChild(s),w.appendChild(i)}}z(),N()}({...t.settings,container:o})})).catch((e=>console.error("Widget load error:",e)))}catch(e){console.error("widget init err",e)}})();
+(async () => {
+    try {
+      let widgetId;
+      console.log('window.wheeleeKey', window.wheeleeKey)
+      console.log('window.wheeleeSlug', window.wheeleeSlug)
+      // if (window.wheeleeKey) {
+      //   widgetId = window.wheeleeKey;
+      //   console.log('widgetId wheeleeKey', widgetId)
+      // }
+      // // Для продакшену: Конвертуємо slug у id
+      // else 
+      if (window.wheeleeSlug) {
+        console.log('widgetId wheeleeSlug', widgetId)
+        const API_BASE = "https://ptulighepuqttsocdovp.supabase.co";
+        const response = await fetch(`${API_BASE}/functions/v1/get-widget-id/${window.wheeleeSlug}`);
+        if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        const data = await response.json();
+        console.log('get-widget-id data', data)
+        if (!data.id) throw new Error("Widget ID not found");
+        widgetId = data.id;
+      } else {
+        console.error("wheeleeKey or wheeleeSlug required");
+        return;
+      }
+  
+      const API_BASE = "https://ptulighepuqttsocdovp.supabase.co";
+      console.log('widgetId before fetch', widgetId)
+      // Підвантажуємо налаштування за id
+      fetch(`${API_BASE}/functions/v1/get-widget/${widgetId}`)
+        .then((r) => {
+          if (!r.ok) throw new Error(`HTTP ${r.status}: ${r.statusText}`);
+          console.log('get-widget-id r', r)
+          return r.json();
+        })
+        .then((widget) => {
+          if (!widget || widget.error) throw new Error(widget.error || "Widget not found");
+          console.log('get-widget-id widget', widget)
+          createWheel({ ...widget.settings });
+        })
+        .catch((err) => console.error("Widget load error:", err));
+  
+      function createWheel(options) {
+        let stylesAdded = false;
+          function hexToRgb(hex) {
+              const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+              return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+              } : { r: 0, g: 0, b: 0 };
+          }
+            
+          function rgbToHex(r, g, b) {
+              return "#" + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
+          }
+          
+          function darkenColor(hex, percent) {
+              const rgb = hexToRgb(hex);
+              const factor = 1 - percent / 100;
+              const r = Math.round(rgb.r * factor);
+              const g = Math.round(rgb.g * factor);
+              const b = Math.round(rgb.b * factor);
+              return rgbToHex(r, g, b);
+          }
+      
+          const { bonuses, color, buttonText, collectData } = options;
+          const baseColor = color || '#eb112a';
+          const darkerColor = darkenColor(baseColor, 20);
+          const container = document.getElementById("wheelee-container") ? document.getElementById("wheelee-container") : document.body;
+          // const container = document.body;
+          if (!container) return;
+        
+          const existingWheel = document.querySelector('.widget-wheel-wrap');
+          if (existingWheel) {
+              console.warn('Колесо вже існує на сторінці. Видаляю старе...');
+              existingWheel.remove();
+          }
+      
+          const wheelWrap = document.createElement("div");
+          wheelWrap.className = "widget-wheel-wrap";
+          wheelWrap.classList.add('_hidden');
+          container.appendChild(wheelWrap);
+          
+          const openButton = document.createElement('div');
+          openButton.className = 'widget-open-btn';
+          openButton.textContent = 'Відкрити віджет';
+          document.body.appendChild(openButton);
+  
+          openButton.addEventListener('click', () => {
+            wheelWrap.classList.remove('_hidden');
+            wheelWrap.classList.add('_active');
+          });
+  
+          const closeButton = document.createElement('button');
+          closeButton.className = 'widget-close-btn';
+          closeButton.innerHTML = '✕'; 
+          wheelWrap.appendChild(closeButton);
+  
+          closeButton.addEventListener('click', () => {
+            wheelWrap.classList.remove('_active');
+            wheelWrap.classList.add('_hidden');
+          });
+          
+          const wheelForm = document.createElement("div");
+          wheelForm.className = "wheel-form";
+          
+          const canvas = document.createElement("canvas");
+          canvas.width = 550;
+          canvas.height = 550;
+          wheelWrap.appendChild(canvas);
+          wheelWrap.appendChild(wheelForm);
+        
+          const ctx = canvas.getContext("2d");
+          if (!ctx) return;
+          
+          const center = canvas.width / 2;
+          const radius = center - 10;
+  
+          const activeBonuses = bonuses.filter(bonus => bonus.is_participating === true);
+          const sliceAngle = (2 * Math.PI) / activeBonuses.length;
+        
+          if (!stylesAdded) {
+              const styles = document.createElement('style');
+              styles.id = 'widget-wheel-styles';
+              styles.textContent = `
+                  .widget-wheel-wrap {
+                      display: flex;
+                      align-items: center;
+                      gap: 20px;
+                      background: #212230;
+                      position: fixed;
+                      height: 100vh;
+                      width: 70%;
+                      left: 0;
+                      top: 0;
+                      transition: opacity 0.3s ease, transform 0.3s ease; 
+                      opacity: 1;
+                      transform: translateX(0);
+                  }
+                  .widget-wheel-wrap._hidden {
+                    display: none; 
+                  }
+                  .widget-wheel-wrap._active {
+                      display: flex;
+                      opacity: 1;
+                      transform: translateX(0);
+                  }
+                  .widget-open-btn {
+                    position: fixed;
+                    bottom: 20px;
+                    right: 20px;
+                    padding: 10px 20px;
+                    background-color: #ff9900;
+                    color: #fff;
+                    border: none;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    font-size: 16px;
+                    z-index: 1000;
+                    transition: background-color 0.3s ease;
+                  }
+                  .widget-open-btn:hover {
+                      background-color: #e68a00;
+                      transform: scale(1.05);
+                  }
+                  .widget-close-btn {
+                    position: absolute;
+                    top: 20px;
+                    right: 20px;
+                    width: 30px;
+                    height: 30px;
+                    background-color: transparent; 
+                    border: none;
+                    color: #fff;
+                    font-size: 20px;
+                    line-height: 30px;
+                    text-align: center;
+                    cursor: pointer;
+                    transition: background-color 0.3s ease, transform 0.3s ease;
+                    z-index: 1001;
+                  }
+                  .widget-close-btn:hover {
+                    transform: rotate(90deg); 
+                  }
+                  .widget-wheel-spin-btn {
+                      display: block;
+                      padding: 15px 30px;
+                      color: white;
+                      border: none;
+                      white-space: nowrap;
+                      font-size: 18px;
+                      cursor: pointer;
+                      transition: background 0.3s;
+                      position: relative;
+                      z-index: 200;
+                      margin-top: 1rem;
+                      border-radius: 0.375rem;
+                      color: white;
+                      font-weight: bold;
+                      padding: 1rem 2rem;
+                  }
+      
+                  .widget-wheel-spin-btn:hover {
+                      transform: scale(1.05);
+                  }
+      
+                  .widget-wheel-spin-btn:disabled {
+                      background: #ccc;
+                      cursor: not-allowed;
+                      transform: none;
+                  }
+      
+                  .checkbox-box {
+                      width: 26px;            
+                      height: 26px;           
+                      min-width: 26px;        
+                      border-radius: 5px;     
+                      margin-right: 0.5rem;   
+                      border: 1px solid rgba(255,255,255,.2);
+                      transition: opacity 0.4s ease, box-shadow 0.4s ease, border 0.4s ease;
+                  }
+      
+                  .form-wrap {
+                      width: 100%;
+                      display: flex;
+                      flex-direction: column;
+                      align-items: flex-start;
+                      max-width: 400px;
+                  }
+      
+                  .form-title {
+                      font-size: 24px;
+                      font-weight: bold;
+                  }
+      
+                  .form-subtitle {
+                      font-size: 18px;
+                      margin-top: 4px;
+                      margin-top: 20px;
+                  }
+      
+                  .form {
+                      width: 100%;
+                      display: flex;
+                      flex-direction: column;
+                      align-items: flex-start;
+                      margin-top: 20px;
+                  }
+      
+                  .input-wrap {
+                      width: 100%;
+                      display: flex;
+                      flex-direction: column;
+                      align-items: flex-start;
+                  }
+      
+                  .form-input {
+                      width: 100%;
+                      max-width: 100%;
+                      border: 1px solid rgba(255, 255, 255, 0.1);
+                      outline: none;
+                      background-color: transparent;
+                      color: white;
+                      height: 60px;
+                      border-radius: 10px;
+                      padding-left: 60px;
+                      transition: opacity 0.4s ease, box-shadow 0.4s ease, border 0.4s ease;
+                  }
+      
+                  .checkbox-wrap {
+                      width: 100%;
+                      display: flex;
+                      align-items: flex-start;
+                       margin-top: 20px;
+                  }
+      
+                  .form-label {
+                      position: relative;
+                      cursor: pointer;
+                      display: inline-flex;
+                      align-items: center;
+                  }
+      
+                 .checked {
+                      background-repeat: no-repeat;
+                      background-position: center;
+                      background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQiIGhlaWdodD0iMTQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+IDxwYXRoIGQ9Ik0xMS40IDVMMTAgMy42bC00IDQtMi0yTDIuNiA3IDYgMTAuNHoiIGZpbGw9IiNGRkYiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==);
+                  }
+      
+                  .policy-text {
+                      font-size: 12px;
+                      line-height: 16px;
+                  }
+      
+                  .widget-prize-title {
+                      font-size: 46px;
+                      line-height: 50px;
+                      color: white;
+                      font-weight: bold;
+                  }
+      
+                  .widget-prize-text {
+                      font-size: 18px;
+                      line-height: 22px;
+                      margin-top: 20px;
+                      color: white;
+                  }
+      
+                  .checkbox-box.error {
+                    animation: shake 0.12s ease-in-out 0.1s 2;
+                    box-shadow: 0 0 0.5em #ff4949;
+                    border: 1px solid #ff4949;
+                    transition: opacity 0.4s ease 0.1s, box-shadow 0.4s ease 0.1s, border 0.4s ease 0.1s;
+                    opacity: 1;
+                  }
+  
+                  input.error {
+                    animation: shake 0.12s ease-in-out 0s 2;
+                    box-shadow: 0 0 0.5em #ff4949;
+                    border: 1px solid #ff4949;
+                    transition: opacity 0.4s ease, box-shadow 0.4s ease, border 0.4s ease;
+                    opacity: 1;
+                  }
+      
+                  @keyframes shake {
+                    0% { transform: translateX(0); }
+                    25% { transform: translateX(4px); }
+                    75% { transform: translateX(-4px); }
+                    100% { transform: translateX(0); }
+                  }
+              `;
+              document.head.appendChild(styles);
+              stylesAdded = true;
+          }
+        
+          let rotation = 0;
+          let spinning = false;
+          let prize = null;
+          let contact = "";
+          let isPolicyAccepted = false;
+          let isInputValid = false;
+          let idleRotation = 0;
+          let idleAnimationId = null;
+        
+          function startIdleRotation() {
+            if (idleAnimationId) return;
+            
+            function animateIdle() {
+              if (!spinning) {
+                idleRotation += 0.002; // Повільне обертання
+                drawWheel();
+                idleAnimationId = requestAnimationFrame(animateIdle);
+              }
+            }
+            
+            idleAnimationId = requestAnimationFrame(animateIdle);
+          }
+          
+          function stopIdleRotation() {
+            if (idleAnimationId) {
+              cancelAnimationFrame(idleAnimationId);
+              idleAnimationId = null;
+            }
+          }
+          
+          function drawWheel() {
+            if (!ctx) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            activeBonuses.forEach((prize, i) => {
+              const startAngle = i * sliceAngle + rotation + idleRotation;
+              const endAngle = startAngle + sliceAngle;
+              ctx.shadowColor = "rgba(0,0,0,0.2)";
+              ctx.shadowBlur = 8;
+              ctx.shadowOffsetX = 0;
+              ctx.shadowOffsetY = 2;
+              // Сектор
+              ctx.save();
+              ctx.shadowColor = "transparent";
+              ctx.beginPath();
+              ctx.moveTo(center, center);
+              ctx.arc(center, center, radius, startAngle, endAngle);
+              ctx.fillStyle = i % 2 === 0 ? baseColor : darkerColor;
+              ctx.fill();
+        
+              // Текст
+              ctx.save();
+              ctx.translate(center, center);
+              ctx.rotate(startAngle + sliceAngle / 2);
+              ctx.textAlign = "center";
+              ctx.textBaseline = "middle";
+              const textRadius = radius / 2;
+              ctx.fillStyle = "#000";
+              ctx.font = "16px Arial";
+              ctx.fillText(prize.value, textRadius + 40, 0);
+              ctx.restore();
+      
+              
+            });
+        
+            // Коло в центрі
+            ctx.save();
+            ctx.shadowColor = "rgba(0,0,0,0.2)"; 
+            ctx.shadowBlur = 8;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 2;
+            ctx.beginPath();
+            ctx.arc(center, center, 60, 0, 2 * Math.PI);
+            ctx.fillStyle = "#fff";
+            ctx.fill();
+            ctx.restore();
+            // Стрілка
+            ctx.shadowColor = "rgba(0, 0, 0, 0.2)";
+            ctx.shadowBlur = 3;
+            ctx.shadowOffsetX = -3;
+            ctx.shadowOffsetY = 3;
+            ctx.fillStyle = "#fff";
+            ctx.beginPath();
+            ctx.moveTo(center + radius + 7, center - 15);   
+            ctx.lineTo(center + radius + 7, center + 15);   
+            ctx.lineTo(center + radius - 35, center);      
+            ctx.closePath();
+            ctx.fill();
+          }
+        
+          function spin() {
+              if (spinning) return;
+              spinning = true;
+              stopIdleRotation();
+              const targetIndex = Math.floor(Math.random() * activeBonuses.length);
+              const randomOffset = (Math.random() - 0.5) * sliceAngle * 0.8;
+            
+              const targetAngle =
+                2 * Math.PI * 5 +
+                (targetIndex * sliceAngle + sliceAngle / 2) +
+                randomOffset;
+            
+              const duration = 5000;
+              const start = performance.now();
+              const initialRotation = rotation;
+            
+              function easeInOutCubic(t) {
+                  return 1 - Math.pow(1 - t, 3);
+              }
+      
+              function easeInOutShifted(t, bias = 0.3) {
+                  // bias < 0.5 = швидше набирає, довше гальмує
+                  if (t < bias) {
+                    return Math.pow(t / bias, 2); // швидкий розгін
+                  } else {
+                  //   return 1 - Math.pow((1 - t) / (1 - bias), 2); // плавне гальмування
+                    return 1 - Math.pow(1 - t, 3);
+                  }
+                }
+                
+            
+              function animate(now) {
+                const elapsed = now - start;
+                const progress = Math.min(elapsed / duration, 1);
+            
+                const ease = easeInOutShifted(progress);
+                rotation = initialRotation + ease * targetAngle;
+            
+                drawWheel();
+                
+                if (progress < 1) {
+                  requestAnimationFrame(animate);
+                } else {
+                  spinning = false;
+                  const normalized = (rotation % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+                  const winningIndex = Math.floor(((2 * Math.PI - normalized) % (2 * Math.PI)) / sliceAngle);
+                  prize = activeBonuses[winningIndex].value;
+                  
+                  // Зберігаємо дані в базу https://ptulighepuqttsocdovp.supabase.co/functions/v1/save-result
+                  try {
+                    fetch(`${API_BASE}/functions/v1/save-result`, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json'},
+                      body: JSON.stringify({ widget_id: widgetId, contact, prize })
+                    });
+                  } catch (e) {
+                    console.error('save result err', e);
+                  }
+                  
+                  render()
+                }
+              }
+            
+              requestAnimationFrame(animate);
+          }
+        
+        
+          function render() {
+              wheelForm.innerHTML = "";
+          
+              if (!prize) {
+                // Форма
+                const wrap = document.createElement("div");
+                wrap.className = "form-wrap";
+          
+                if (options.title) {
+                  const title = document.createElement("div");
+                  title.className = "form-title";
+                  title.textContent = options.title;
+                  wrap.appendChild(title);
+                }
+          
+                if (options.subtitle) {
+                  const p = document.createElement("p");
+                  p.className = "form-subtitle";
+                  p.textContent = options.subtitle;
+                  wrap.appendChild(p);
+                }
+          
+                const form = document.createElement("form");
+                form.className = "form";
+                form.addEventListener("submit", e => e.preventDefault());
+          
+                // email input
+                const divInput = document.createElement("div");
+                divInput.className = "input-wrap";
+      
+              const input = document.createElement("input");
+              input.value = contact;
+              input.type = collectData === "email" ? "email" : "tel";
+              input.placeholder = collectData === "email" ? "Enter your email" : "Enter your phone";
+              input.className = "form-input";
+              input.addEventListener("input", e => contact = e.target.value);
+              divInput.appendChild(input);
+      
+              // Валідація
+              function validateInput() {
+      
+                if (collectData === "email") {
+                  console.log("email");
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    isInputValid = emailRegex.test(input.value.trim());
+                } else if (collectData === "tel") {
+                  console.log("tel");
+                    const telRegex = /^\+?[0-9]{7,15}$/; // телефон з 7–15 цифр, опціонально з "+"
+                    isInputValid = telRegex.test(input.value.trim());
+                }
+      
+                
+                if (!isInputValid) {
+                    input.classList.add("error");
+      
+                    setTimeout(() => {
+                    input.classList.remove("error");
+                    }, 1000);
+                }
+      
+                return isInputValid;
+              }
+      
+              function validatePolicy() {
+                if (!isPolicyAccepted) {
+                  setTimeout(() => {
+                    box.classList.add("error");
+                  }, 200);
+                  setTimeout(() => {
+                    box.classList.remove("error");
+                  }, 1000);
+                }
+      
+                return isPolicyAccepted;
+              }
+      
+              input.addEventListener("blur", validateInput);
+          
+                // чекбокс
+                const divCheckWrap = document.createElement("div");
+                divCheckWrap.className = "checkbox-wrap";
+          
+                const divCheck = document.createElement("div");
+          
+                const label = document.createElement("label");
+                label.className = "form-label";
+          
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.className = "sr-only peer";
+                checkbox.addEventListener("change", () => {
+                  isPolicyAccepted = checkbox.checked;
+                  if (isPolicyAccepted) {
+                      box.classList.add("checked");
+                  }
+                  render();
+                });
+          
+                const box = document.createElement("div");
+                box.className = "checkbox-box";
+                if (isPolicyAccepted) {
+                  box.classList.add("checked");
+                }
+                checkbox.checked = isPolicyAccepted;
+      
+                label.appendChild(checkbox);
+                label.appendChild(box);
+                divCheck.appendChild(label);
+          
+                const policyText = document.createElement("div");
+                policyText.className = "policy-text";
+                policyText.innerHTML = `Я даю своё <a href="#" class="" target="_blank">Cогласие</a> на обработку персональных данных и подтверждаю ознакомление с <a href="${options.privacyUrl}" class="" target="_blank">Политикой</a> обработки персональных данных`;
+          
+                divCheckWrap.appendChild(divCheck);
+                divCheckWrap.appendChild(policyText);
+          
+                // кнопка
+                const btn = document.createElement("button");
+                btn.id = "spin_button";
+                btn.textContent = buttonText;
+                btn.className = "widget-wheel-spin-btn";
+                btn.style.backgroundColor = options.color;
+                btn.addEventListener("click", () => {
+                  if (!isPolicyAccepted || !validateInput()) {
+                    validatePolicy()
+                    validateInput()
+                    return;
+                  }
+                  spin();
+                });
+          
+                form.appendChild(divInput);
+                form.appendChild(divCheckWrap);
+                form.appendChild(btn);
+          
+                wrap.appendChild(form);
+                wheelForm.appendChild(wrap);
+              } else {
+                // Екран з результатом
+                const wrap = document.createElement("div");
+          
+                const prizeText = document.createElement("div");
+                prizeText.className = "widget-prize-title";
+                prizeText.textContent = prize;
+          
+                const msg = document.createElement("div");
+                msg.className = "widget-prize-text";
+                msg.textContent = options.successMessage;
+          
+                wrap.appendChild(prizeText);
+                wrap.appendChild(msg);
+                wheelWrap.appendChild(wrap);
+              }
+          }
+          render();
+          drawWheel();
+          startIdleRotation();
+      }
+    } catch (e) {
+      console.error('widget init err', e);
+    }
+  })();
+  

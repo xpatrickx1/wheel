@@ -6,7 +6,7 @@ export function Wheeltest() {
   
   useEffect(() => {
     createWheel("root", {
-      prizes: [
+      bonuses: [
         { text: "Бонус #1"},
         { text: "Бонус #2"},
         { text: "Бонус #3"},

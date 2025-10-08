@@ -36,7 +36,7 @@ export const TabBonus = ({
                 onChange={(e) => handleChange(i, "is_participating", e.target.checked)}
                 className="sr-only peer"
               />
-              <div className={`peer-checked relative w-5 h-5 border-2 border-gray-500 bg-gray-700 peer-checked:border-blue-500 peer-checked:bg-blue-500 transition-colors duration-200 ease-in-out ${bonus.is_participating ? 'peer-checked' : ''}`}></div>
+              <div className={`peer-checked relative w-5 h-5 border-2 border-gray-500 bg-gray-700 peer-checked:border-blue-500 peer-checked:bg-blue-500 transition-colors duration-200 ease-in-out ${bonus.is_participating ? 'peer-checked checked' : ''}`}></div>
             </label>
             <label className="ml-2 text-xs text-white">Участвует в розыгрыше</label>
           </div>

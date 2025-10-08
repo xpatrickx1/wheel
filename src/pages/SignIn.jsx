@@ -45,7 +45,7 @@ export default function SignIn() {
 
   if (!session) {
     return (
-      <div className="max-w-xs mx-auto">
+      <div className="max-w-xs mx-auto pt-[10rem]">
         <Auth
           supabaseClient={supabase}
           appearance={{ theme: ThemeSupa }}

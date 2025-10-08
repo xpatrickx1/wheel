@@ -5,6 +5,7 @@ import { ModalCreateWidget } from '../components/ModalCreateWidget';
 import { ModalSettings } from '../components/ModalSettings';
 import { defaultWidgetSettings, WidgetSettings } from '../lib/defaultSettings';
 import { Eye, Funnel, Settings } from 'lucide-react';
+import Loader from '../ui/loader';
 
 interface Widget {
   id: string;
@@ -107,6 +108,7 @@ export default function Dashboard() {
           is_active: true,
           settings: defaultWidgetSettings,
           user_id: user.id,
+          is_public: true,
         }),
       });
   
@@ -143,15 +145,9 @@ export default function Dashboard() {
     }
   };
 
-  const handleOpenRequests = (widgetId: string) => {
-    console.log(`Open requests for widget ${widgetId}`);
-    // Логіка для navigate(`/widgets/${widgetId}/requests`) з useNavigate, якщо потрібно
-  };
-
   const handleOpenSettings = (widgetId: string) => {
     setWidgetId(widgetId);
     setIsModalSettingsOpen(true); 
-    // console.log(widgets);
   };
 
   const handleSaveSettings = async (newSettings: WidgetSettings) => {
@@ -182,12 +178,13 @@ export default function Dashboard() {
   return (
     <>
       <Header />
-      <div className="max-w-2xl mx-auto p-4">
+      <div className="max-w-2xl mx-auto p-4 pt-[10rem]">
         <h1 className="text-2xl font-bold mb-4">Мої віджети</h1>
-
+        
         {loading ? (
-          <p className="text-center">Завантаження...</p>
+          <Loader />
         ) : widgets.length > 0 ? (
+          <>
           <ul className="space-y-2">
             {widgets.map((widget) => (
               <li
@@ -217,7 +214,7 @@ export default function Dashboard() {
                     <span className="text-white">Відкрити</span>
                   </a>
                   <a
-                    onClick={() => handleOpenRequests(widget.id)}
+                    href={`/leads/${widget.slug}`}
                     className="flex items-center space-x-2 text-white hover:text-blue-300 text-sm"
                   >
                     <span className="text-blue-400"><Funnel size={16} /></span>
@@ -234,16 +231,18 @@ export default function Dashboard() {
               </li>
             ))}
           </ul>
+          <button
+            className="mt-4 bg-blue-600 rounded-lg mt-10 hover:bg-blue-700 text-white font-bold py-2 px-4 w-full md:w-auto cursor-pointer"
+            onClick={() => setIsCreateModalOpen(true)}
+          >
+            Новий віджет
+          </button>
+          </>
         ) : (
           <p className="text-center text-gray-500">Віджетів поки нема</p>
         )}
 
-        <button
-          className="mt-4 bg-blue-600 rounded-lg mt-10 hover:bg-blue-700 text-white font-bold py-2 px-4 w-full md:w-auto cursor-pointer"
-          onClick={() => setIsCreateModalOpen(true)}
-        >
-          Новий віджет
-        </button>
+        
 
         <ModalCreateWidget
           isOpen={isCreateModalOpen}

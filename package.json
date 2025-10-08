@@ -15,9 +15,12 @@
     "@supabase/auth-ui-shared": "^0.1.8",
     "@supabase/supabase-js": "^2.54.0",
     "@tailwindcss/vite": "^4.1.11",
+    "framer-motion": "^12.23.22",
+    "i18next": "^25.5.3",
     "lucide-react": "^0.544.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-i18next": "^16.0.0",
     "react-router-dom": "^7.7.1"
   },
   "devDependencies": {

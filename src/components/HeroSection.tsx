@@ -1,13 +1,15 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 export function HeroSection() {
+  const { t } = useTranslation();
   return (
-    <div className="box-border text-center mt-[100px]">
+    <div className="box-border text-center pt-[100px]">
       <div className="box-border flex flex-wrap max-w-none w-full mx-auto px-[15px] md:max-w-[1140px]">
         <div className="relative box-border basis-0 grow max-w-full min-h-px w-full px-[15px]">
-          <h1 className="text-4xl font-bold box-border leading-[43.2px] mb-3.5">Колесо фортуны — виджет для сайта</h1>
+          <h1 className="text-4xl font-bold box-border leading-[43.2px] mb-3.5">{t('pageTitle')}</h1>
           <h2 className="text-xl box-border leading-[30px] max-w-[500px] opacity-70 mb-10 mx-auto">
-            Увеличение конверсии сайта с помощью виджета. Начните получать больше заявок.
+            {t('desc')}
           </h2>
 <div className="widget-container" data-widget-id="wheel-spinner" data-widget-height data-widget-rnd="3" data-widget-lang="en"></div>
 <script async src="https://cdn.vuqq.com/static/embed.js?nocache=538124"></script>

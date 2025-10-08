@@ -23,6 +23,7 @@ async function saveResult(contact, prize) {
 }
 
 export default function createWheel(containerId, options) {
+  console.log(containerId)
     function hexToRgb(hex) {
         const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
         return result ? {
@@ -45,7 +46,7 @@ export default function createWheel(containerId, options) {
         return rgbToHex(r, g, b);
     }
 
-    const { prizes, color, buttonText, collectData } = options;
+    const { bonuses, color, buttonText, collectData } = options;
     const baseColor = color || '#eb112a';
     const darkerColor = darkenColor(baseColor, 20);
 
@@ -61,180 +62,276 @@ export default function createWheel(containerId, options) {
     const wheelWrap = document.createElement("div");
     wheelWrap.className = "widget-wheel-wrap";
     container.appendChild(wheelWrap);
-
-    const wheelForm = document.createElement("div");
-    wheelForm.className = "wheel-form";
+    wheelWrap.classList.add('_hidden');
     
-    const canvas = document.createElement("canvas");
-    canvas.width = 550;
-    canvas.height = 550;
-    wheelWrap.appendChild(canvas);
-    wheelWrap.appendChild(wheelForm);
-  
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    
-    const center = canvas.width / 2;
-    const radius = center - 10;
-    const sliceAngle = (2 * Math.PI) / prizes.length;
-  
-    if (!stylesAdded) {
-        const styles = document.createElement('style');
-        styles.id = 'widget-wheel-styles';
-        styles.textContent = `
-            .widget-wheel-wrap {
-                display: flex;
-                align-items: center;
-                gap: 20px;
-            }
-            .widget-wheel-spin-btn {
-                display: block;
-                padding: 15px 30px;
-                color: white;
-                border: none;
-                white-space: nowrap;
-                font-size: 18px;
-                cursor: pointer;
-                transition: background 0.3s;
-                position: relative;
-                z-index: 200;
-                margin-top: 1rem;
-                border-radius: 0.375rem;
-                color: white;
-                font-weight: bold;
-                padding: 1rem 2rem;
-            }
 
-            .widget-wheel-spin-btn:hover {
-                transform: scale(1.05);
-            }
-
-            .widget-wheel-spin-btn:disabled {
-                background: #ccc;
-                cursor: not-allowed;
-                transform: none;
-            }
-
-            .checkbox-box {
-                width: 26px;            
-                height: 26px;           
-                min-width: 26px;        
-                border-radius: 5px;     
-                margin-right: 0.5rem;   
-                border: 1px solid rgba(255,255,255,.2);
-            }
-
-            .form-wrap {
-                width: 100%;
-                display: flex;
-                flex-direction: column;
-                align-items: flex-start;
-                max-width: 400px;
-            }
-
-            .form-title {
-                font-size: 24px;
-                font-weight: bold;
-            }
-
-            .form-subtitle {
-                font-size: 18px;
-                margin-top: 4px;
-                margin-top: 20px;
-            }
-
-            .form {
-                width: 100%;
-                display: flex;
-                flex-direction: column;
-                align-items: flex-start;
-                margin-top: 20px;
-            }
-
-            .input-wrap {
-                width: 100%;
-                display: flex;
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .form-input {
-                width: 100%;
-                max-width: 100%;
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                outline: none;
-                background-color: transparent;
-                color: white;
-                height: 60px;
-                border-radius: 10px;
-                padding-left: 60px;
-            }
-
-            .checkbox-wrap {
-                width: 100%;
-                display: flex;
-                align-items: flex-start;
-                 margin-top: 20px;
-            }
-
-            .form-label {
-                position: relative;
-                cursor: pointer;
-                display: inline-flex;
-                align-items: center;
-            }
-
-           .checked {
-                background-repeat: no-repeat;
-                background-position: center;
-                background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQiIGhlaWdodD0iMTQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+IDxwYXRoIGQ9Ik0xMS40IDVMMTAgMy42bC00IDQtMi0yTDIuNiA3IDYgMTAuNHoiIGZpbGw9IiNGRkYiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==);
-            }
-
-            .policy-text {
-                font-size: 12px;
-                line-height: 16px;
-            }
-
-            .widget-prize-title {
-                font-size: 46px;
-                line-height: 50px;
-                color: white;
-                font-weight: bold;
-            }
-
-            .widget-prize-text {
-                font-size: 18px;
-                line-height: 22px;
-                margin-top: 20px;
-                color: white;
-            }
-
-            .checkbox-box.error {
-              animation: shake 0.12s ease-in-out 0s 2;
-              box-shadow: 0 0 0.5em #ff4949;
-              border: 1px solid #ff4949;
-              transition: opacity 0.4s ease, box-shadow 0.4s ease, border 0.4s ease;
-              opacity: 1;
-            }
-
-            input.error {
-              animation: shake 0.12s ease-in-out 0s 2;
-              box-shadow: 0 0 0.5em #ff4949;
-              border: 1px solid #ff4949;
-              transition: opacity 0.4s ease, box-shadow 0.4s ease, border 0.4s ease;
-              opacity: 1;
-            }
-
-            @keyframes shake {
-              0% { transform: translateX(0); }
-              25% { transform: translateX(4px); }
-              75% { transform: translateX(-4px); }
-              100% { transform: translateX(0); }
-            }
-        `;
-        document.head.appendChild(styles);
-        stylesAdded = true;
+    const existingOpenBtn = document.querySelector('.widget-open-btn');
+    if (existingOpenBtn) {
+        console.warn('Кнопка вже існує на сторінці. Видаляю старе...');
+        existingOpenBtn.remove();
     }
+
+    const openButton = document.createElement('div');
+    openButton.className = 'widget-open-btn';
+    openButton.textContent = 'Відкрити віджет';
+    document.body.appendChild(openButton);
+
+    openButton.addEventListener('click', () => {
+      openButton.classList.add('_hidden');
+      wheelWrap.classList.remove('_hidden');
+      wheelWrap.classList.add('_active');
+    });
+
+    const closeButton = document.createElement('button');
+    closeButton.className = 'widget-close-btn';
+    closeButton.innerHTML = '✕'; 
+    wheelWrap.appendChild(closeButton);
+
+    closeButton.addEventListener('click', () => {
+      wheelWrap.classList.remove('_active');
+      openButton.classList.remove('_hidden');
+      wheelWrap.classList.add('_hidden');
+    });
+        
+        const wheelForm = document.createElement("div");
+        wheelForm.className = "wheel-form";
+        
+        const canvas = document.createElement("canvas");
+        canvas.width = 550;
+        canvas.height = 550;
+        wheelWrap.appendChild(canvas);
+        wheelWrap.appendChild(wheelForm);
+      
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
+        
+        const center = canvas.width / 2;
+        const radius = center - 10;
+
+        const activeBonuses = bonuses.filter(bonus => bonus.is_participating === true);
+        const sliceAngle = (2 * Math.PI) / activeBonuses.length;
+      
+        if (!stylesAdded) {
+            const styles = document.createElement('style');
+            styles.id = 'widget-wheel-styles';
+            styles.textContent = `
+                .widget-wheel-wrap {
+                    display: flex;
+                    align-items: center;
+                    gap: 20px;
+                    background: #212230;
+                    position: fixed;
+                    height: 100vh;
+                    width: 70%;
+                    left: 0;
+                    top: 0;
+                    transition: opacity 0.3s ease, transform 0.3s ease; 
+                    opacity: 1;
+                    transform: translateX(-100%);
+                }
+                .widget-wheel-wrap._hidden {
+                  opacity: 0; 
+                  transform: translateX(-100%);
+                }
+                .widget-wheel-wrap._active {
+                    display: flex;
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+                .widget-open-btn {
+                  position: fixed;
+                  bottom: 20px;
+                  left: 20px;
+                  padding: 10px 20px;
+                  background-color: #ff9900;
+                  color: #fff;
+                  border: none;
+                  border-radius: 5px;
+                  cursor: pointer;
+                  font-size: 16px;
+                  z-index: 1000;
+                  transition: background-color 0.3s ease;
+                }
+                .widget-open-btn:hover {
+                    background-color: #e68a00;
+                    transform: scale(1.05);
+                }
+                .widget-open-btn._hidden {
+                  display: none;
+                }
+                .widget-wheel-wrap canvas {
+                  position: absolute;
+                  left: -275px;
+                }
+                .widget-close-btn {
+                  position: absolute;
+                  top: 20px;
+                  right: 20px;
+                  width: 30px;
+                  height: 30px;
+                  background-color: transparent; 
+                  border: none;
+                  color: #fff;
+                  font-size: 20px;
+                  line-height: 30px;
+                  text-align: center;
+                  cursor: pointer;
+                  transition: background-color 0.3s ease, transform 0.3s ease;
+                  z-index: 1001;
+                }
+                .widget-close-btn:hover {
+                  transform: rotate(90deg); 
+                }
+                .widget-wheel-spin-btn {
+                    display: block;
+                    padding: 15px 30px;
+                    color: white;
+                    border: none;
+                    white-space: nowrap;
+                    font-size: 18px;
+                    cursor: pointer;
+                    transition: background 0.3s;
+                    position: relative;
+                    z-index: 200;
+                    margin-top: 1rem;
+                    border-radius: 0.375rem;
+                    color: white;
+                    font-weight: bold;
+                    padding: 1rem 2rem;
+                }
+    
+                .widget-wheel-spin-btn:hover {
+                    transform: scale(1.05);
+                }
+    
+                .widget-wheel-spin-btn:disabled {
+                    background: #ccc;
+                    cursor: not-allowed;
+                    transform: none;
+                }
+    
+                .checkbox-box {
+                    width: 26px;            
+                    height: 26px;           
+                    min-width: 26px;        
+                    border-radius: 5px;     
+                    margin-right: 0.5rem;   
+                    border: 1px solid rgba(255,255,255,.2);
+                    transition: opacity 0.4s ease, box-shadow 0.4s ease, border 0.4s ease;
+                }
+    
+                .form-wrap {
+                    width: 100%;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    max-width: 400px;
+                }
+    
+                .form-title {
+                    font-size: 24px;
+                    font-weight: bold;
+                }
+    
+                .form-subtitle {
+                    font-size: 18px;
+                    margin-top: 4px;
+                    margin-top: 20px;
+                }
+    
+                .form {
+                    width: 100%;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    margin-top: 20px;
+                }
+    
+                .input-wrap {
+                    width: 100%;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+    
+                .form-input {
+                    width: 100%;
+                    max-width: 100%;
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    outline: none;
+                    background-color: transparent;
+                    color: white;
+                    height: 60px;
+                    border-radius: 10px;
+                    padding-left: 60px;
+                    transition: opacity 0.4s ease, box-shadow 0.4s ease, border 0.4s ease;
+                }
+    
+                .checkbox-wrap {
+                    width: 100%;
+                    display: flex;
+                    align-items: flex-start;
+                     margin-top: 20px;
+                }
+    
+                .form-label {
+                    position: relative;
+                    cursor: pointer;
+                    display: inline-flex;
+                    align-items: center;
+                }
+    
+               .checked {
+                    background-repeat: no-repeat;
+                    background-position: center;
+                    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQiIGhlaWdodD0iMTQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+IDxwYXRoIGQ9Ik0xMS40IDVMMTAgMy42bC00IDQtMi0yTDIuNiA3IDYgMTAuNHoiIGZpbGw9IiNGRkYiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==);
+                }
+    
+                .policy-text {
+                    font-size: 12px;
+                    line-height: 16px;
+                }
+    
+                .widget-prize-title {
+                    font-size: 46px;
+                    line-height: 50px;
+                    color: white;
+                    font-weight: bold;
+                }
+    
+                .widget-prize-text {
+                    font-size: 18px;
+                    line-height: 22px;
+                    margin-top: 20px;
+                    color: white;
+                }
+    
+                .checkbox-box.error {
+                  animation: shake 0.12s ease-in-out 0.1s 2;
+                  box-shadow: 0 0 0.5em #ff4949;
+                  border: 1px solid #ff4949;
+                  transition: opacity 0.4s ease 0.1s, box-shadow 0.4s ease 0.1s, border 0.4s ease 0.1s;
+                  opacity: 1;
+                }
+
+                input.error {
+                  animation: shake 0.12s ease-in-out 0s 2;
+                  box-shadow: 0 0 0.5em #ff4949;
+                  border: 1px solid #ff4949;
+                  transition: opacity 0.4s ease, box-shadow 0.4s ease, border 0.4s ease;
+                  opacity: 1;
+                }
+    
+                @keyframes shake {
+                  0% { transform: translateX(0); }
+                  25% { transform: translateX(4px); }
+                  75% { transform: translateX(-4px); }
+                  100% { transform: translateX(0); }
+                }
+            `;
+            document.head.appendChild(styles);
+            stylesAdded = true;
+        }
   
     let rotation = 0;
     let spinning = false;
@@ -248,7 +345,7 @@ export default function createWheel(containerId, options) {
       if (!ctx) return;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-      prizes.forEach((prize, i) => {
+      bonuses.forEach((bonus, i) => {
         const startAngle = i * sliceAngle + rotation;
         const endAngle = startAngle + sliceAngle;
         ctx.shadowColor = "rgba(0,0,0,0.2)";
@@ -273,7 +370,7 @@ export default function createWheel(containerId, options) {
         const textRadius = radius / 2;
         ctx.fillStyle = "#000";
         ctx.font = "16px Arial";
-        ctx.fillText(prize.text, textRadius + 40, 0);
+        ctx.fillText(bonus.text, textRadius + 40, 0);
         ctx.restore();
 
         
@@ -308,7 +405,7 @@ export default function createWheel(containerId, options) {
         if (spinning) return;
         spinning = true;
       
-        const targetIndex = Math.floor(Math.random() * prizes.length);
+        const targetIndex = Math.floor(Math.random() * bonuses.length);
         const randomOffset = (Math.random() - 0.5) * sliceAngle * 0.8;
       
         const targetAngle =
@@ -351,7 +448,7 @@ export default function createWheel(containerId, options) {
             const normalized = (rotation % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
             const winningIndex = Math.floor(((2 * Math.PI - normalized) % (2 * Math.PI)) / sliceAngle);
             // alert("Випав приз: " + prizes[winningIndex].text);
-            indicatedSegment = prizes[winningIndex].text;
+            indicatedSegment = bonuses[winningIndex].text;
             
             // Зберігаємо дані в базу
             saveResult(inputValue, indicatedSegment);

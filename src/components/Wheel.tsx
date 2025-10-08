@@ -71,7 +71,7 @@ export function Wheel({ id }: { id: string }) {
       const participatingBonuses = settings.bonuses.filter((bonus: any) => bonus.is_participating);
       const numSegments = participatingBonuses.length || 8;
 
-      const baseColor = settings.color || '#eb112a'; // Дефолтний колір, як у прикладі
+      const baseColor = settings.color || '#eb112a'; 
       const darkerColor = darkenColor(baseColor, 20);
 
       const segments = participatingBonuses.map((bonus: any, index: number) => ({
