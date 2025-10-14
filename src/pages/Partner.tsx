@@ -31,7 +31,7 @@ export default function Partner() {
         
           {/* Referral Link */}
           <div className="bg-[#121624] rounded-xl w-full max-w-md p-4 mb-6 text-center text-blue-400 font-semibold select-all">
-            lp9.ru/r/pysuvo53
+          wheelee.com/r/pysuvo53
           </div>
           
           

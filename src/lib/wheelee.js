@@ -13,7 +13,7 @@
       console.error("wheeleeKey or wheeleeSlug required");
       return;
     }
-
+    console.log('widgetId', widgetId)
     const API_BASE = "https://ptulighepuqttsocdovp.supabase.co";
     // Підвантажуємо налаштування за id
     fetch(`${API_BASE}/functions/v1/get-widget/${widgetId}`)
@@ -29,6 +29,7 @@
       .catch((err) => console.error("Widget load error:", err));
 
     function createWheel(options) {
+      console.log('createWheel', options)
       let stylesAdded = false;
         function hexToRgb(hex) {
             const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -51,10 +52,38 @@
             const b = Math.round(rgb.b * factor);
             return rgbToHex(r, g, b);
         }
+
+        function getContrastTextColor(bgColor) {
+          let r, g, b;
+        
+          // Якщо формат rgb(...)
+          if (bgColor.startsWith('rgb')) {
+            const rgb = bgColor.match(/\d+/g).map(Number);
+            [r, g, b] = rgb;
+          } 
+          // Якщо формат HEX (#RRGGBB або #RGB)
+          else {
+            let hex = bgColor.replace('#', '');
+            if (hex.length === 3) {
+              hex = hex.split('').map(c => c + c).join('');
+            }
+            const bigint = parseInt(hex, 16);
+            r = (bigint >> 16) & 255;
+            g = (bigint >> 8) & 255;
+            b = bigint & 255;
+          }
+        
+          const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        
+          // Поріг можна трохи регулювати: 128 — універсальний, 150 — для темних кольорів
+          return brightness > 150 ? '#000000' : '#ffffff';
+        }
     
         const { bonuses, color, buttonText, collectData } = options;
         const baseColor = color || '#eb112a';
         const darkerColor = darkenColor(baseColor, 20);
+        const openDelay = options.autoOpenDelay * 1000
+
         const container = document.getElementById("wheelee-container") ? document.getElementById("wheelee-container") : document.body;
         if (!container) return;
       
@@ -88,7 +117,8 @@
 
         setTimeout(() => {
           wheelWrap.classList.remove('_hidden');
-        }, options.autoOpenDelay || 10000);
+          wheelWrap.classList.add('_active');
+        }, openDelay || 10000);
 
         const closeButton = document.createElement('button');
         closeButton.className = 'widget-close-btn';
@@ -145,26 +175,14 @@
                     display: flex;
                     opacity: 1;
                     transform: translateX(0);
+                    z-index: 1050;
                 }
 
                 .widget-wheel-wrap canvas {
                   position: absolute;
                   left: -275px;
                 }
-                .widget-open-btn {
-                  position: fixed;
-                  bottom: 20px;
-                  left: 20px;
-                  padding: 10px 20px;
-                  background-color: #ff9900;
-                  color: #fff;
-                  border: none;
-                  border-radius: 5px;
-                  cursor: pointer;
-                  font-size: 16px;
-                  z-index: 1000;
-                  transition: background-color 0.3s ease;
-                }
+                
                 .widget-open-btn:hover {
                     background-color: #e68a00;
                     transform: scale(1.05);
@@ -236,16 +254,34 @@
                     align-items: flex-start;
                     max-width: 400px;
                 }
-    
-                .form-title {
+
+                .wheel-form {
+                  position: absolute;
+                  left: 325px;
+                }
+                .wheel-form-title {
                     font-size: 24px;
                     font-weight: bold;
+                    color: #99A1BA;
+                }
+
+                .sr-only {
+                  position: absolute;
+                  width: 1px;
+                  height: 1px;
+                  padding: 0;
+                  margin: -1px;
+                  overflow: hidden;
+                  clip: rect(0, 0, 0, 0);
+                  white-space: nowrap;
+                  border-width: 0;
                 }
     
-                .form-subtitle {
+                .wheel-form-subtitle {
                     font-size: 18px;
                     margin-top: 4px;
                     margin-top: 20px;
+                    color: #99A1BA;
                 }
     
                 .form {
@@ -296,9 +332,14 @@
                     background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQiIGhlaWdodD0iMTQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+IDxwYXRoIGQ9Ik0xMS40IDVMMTAgMy42bC00IDQtMi0yTDIuNiA3IDYgMTAuNHoiIGZpbGw9IiNGRkYiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==);
                 }
     
-                .policy-text {
+                .wheel-form .policy-text {
                     font-size: 12px;
                     line-height: 16px;
+                    color: #99A1BA;
+                }
+
+                .wheel-form .policy-text a {
+                    color: #646cff;
                 }
     
                 .widget-prize-title {
@@ -338,7 +379,7 @@
                   100% { transform: translateX(0); }
                 }
                 
-                .loader
+                .wheel-spin-loader {
                   margin: 0 auto;
                 }
 
@@ -382,6 +423,33 @@
                   animation-name: reveal;
                   animation-direction: reverse;
                 }
+
+                .widget-open-btn {
+                  position: fixed;
+                  z-index: 999997;
+                  width: 100px;
+                  height: 100px;
+                  cursor: pointer;
+                  left: 10px;
+                  bottom: -30px;
+                  background: url(https://ptulighepuqttsocdovp.supabase.co/storage/v1/object/public/wheelee/gift.png) center center no-repeat;
+                  background-size: contain;
+                  transform-origin: right bottom;
+                  outline: 0;
+                  animation: shakeBox 0.12s infinity 0s 2;
+                }
+
+                @keyframes shakeBox {
+                  0% {
+                      transform: rotate(0deg);
+                  }
+                  50% {
+                      transform: rotate(-6deg);
+                  }
+                  100% {
+                      transform: rotate(0deg);
+                  }
+                }
             `;
             document.head.appendChild(styles);
             stylesAdded = true;
@@ -421,40 +489,75 @@
         }
   
         
-        function drawWheel() {
-          if (!ctx) return;
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          
-          activeBonuses.forEach((prize, i) => {
-            const startAngle = i * sliceAngle + rotation + idleRotation;
-            const endAngle = startAngle + sliceAngle;
-            ctx.shadowColor = "rgba(0,0,0,0.2)";
-            ctx.shadowBlur = 8;
-            ctx.shadowOffsetX = 0;
-            ctx.shadowOffsetY = 2;
-            // Сектор
-            ctx.save();
-            ctx.shadowColor = "transparent";
-            ctx.beginPath();
-            ctx.moveTo(center, center);
-            ctx.arc(center, center, radius, startAngle, endAngle);
-            ctx.fillStyle = i % 2 === 0 ? baseColor : darkerColor;
-            ctx.fill();
-      
-            // Текст
-            ctx.save();
-            ctx.translate(center, center);
-            ctx.rotate(startAngle + sliceAngle / 2);
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-            const textRadius = radius / 2;
-            ctx.fillStyle = "#000";
-            ctx.font = "16px Arial";
-            ctx.fillText(prize.value, textRadius + 40, 0);
-            ctx.restore();
+        // 🔹 Функція для переносу рядків
+      function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+        const words = text.split(' ');
+        let line = '';
+        const lines = [];
+
+        for (let n = 0; n < words.length; n++) {
+          const testLine = line + words[n] + ' ';
+          const metrics = ctx.measureText(testLine);
+          const testWidth = metrics.width;
+
+          if (testWidth > maxWidth && n > 0) {
+            lines.push(line.trim());
+            line = words[n] + ' ';
+          } else {
+            line = testLine;
+          }
+        }
+        lines.push(line.trim());
+
+        // Малюємо кожен рядок
+        const totalHeight = lines.length * lineHeight;
+        const offsetY = -(totalHeight / 2) + lineHeight / 2;
+
+        lines.forEach((l, i) => {
+          ctx.fillText(l, x + 40, y + offsetY + i * lineHeight);
+        });
+      }
+
+
+
+
+      function drawWheel() {
+        if (!ctx) return;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        activeBonuses.forEach((prize, i) => {
+          const startAngle = i * sliceAngle + rotation + idleRotation;
+          const endAngle = startAngle + sliceAngle;
+          ctx.shadowColor = "rgba(0,0,0,0.2)";
+          ctx.shadowBlur = 8;
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 2;
+          // Сектор
+          ctx.save();
+          ctx.shadowColor = "transparent";
+          ctx.beginPath();
+          ctx.moveTo(center, center);
+          ctx.arc(center, center, radius, startAngle, endAngle);
+          ctx.fillStyle = i % 2 === 0 ? baseColor : darkerColor;
+          ctx.fill();
+    
+          // Текст
+          ctx.save();
+          ctx.translate(center, center);
+          ctx.rotate(startAngle + sliceAngle / 2);
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          const textRadius = radius / 2;
+          ctx.fillStyle = getContrastTextColor(baseColor);
+          ctx.font = "16px Arial";
+          const maxWidth = 165;
+          const lineHeight = 26;
+          const text = prize.value;
+          wrapText(ctx, text, textRadius, 0, maxWidth, lineHeight);
+          ctx.restore();
     
             
-          });
+        });
       
           // Коло в центрі
           ctx.save();
@@ -548,10 +651,10 @@
       
         function render() {
             wheelForm.innerHTML = "";
-        
+
             if (spinning) {
               const loader = document.createElement("div");
-              loader.className = "loader";
+              loader.className = "wheel-spin-loader";
               loader.innerHTML = `
                 <div class="dot dot1"></div>
                 <div class="dot dot2"></div>
@@ -569,14 +672,14 @@
           
                 if (options.title) {
                   const title = document.createElement("div");
-                  title.className = "form-title";
+                  title.className = "wheel-form-title";
                   title.textContent = options.title;
                   wrap.appendChild(title);
                 }
           
                 if (options.subtitle) {
                   const p = document.createElement("p");
-                  p.className = "form-subtitle";
+                  p.className = "wheel-form-subtitle";
                   p.textContent = options.subtitle;
                   wrap.appendChild(p);
                 }
@@ -677,6 +780,7 @@
                 const btn = document.createElement("button");
                 btn.id = "spin_button";
                 btn.textContent = buttonText;
+                btn.style = `color: ${getContrastTextColor(baseColor)}`
                 btn.className = "widget-wheel-spin-btn";
                 btn.style.backgroundColor = options.color;
                 btn.addEventListener("click", () => {

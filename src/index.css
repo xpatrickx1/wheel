@@ -47,6 +47,13 @@ h1 {
   line-height: 1.1;
 }
 
+@media (max-width: 767px) {
+  h1 {
+    font-size: 2em;
+    line-height: 1.1;
+  }
+}
+
 input {
   color: #ffffff;
   font-size: 16px

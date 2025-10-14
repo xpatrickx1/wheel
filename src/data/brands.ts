@@ -9,7 +9,7 @@ export interface Brand {
     [
       {
         id: 'yandex',
-        description: 'Яндекс разыгрывал подписки на Яндекс.Плюс внутри своей экосистемы приложений через колесо фортуны lp9.ru',
+        description: ' разыгрывал подписки на .Плюс внутри своей экосистемы приложений через колесо фортуны wheelee.com',
         image: "https://c.animaapp.com/mdsj6ig00k4ngn/assets/logo-yandex.svg",
         imageClass: "box-border w-[140px] mb-5"
       },

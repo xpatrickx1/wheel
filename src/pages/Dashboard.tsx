@@ -179,7 +179,7 @@ export default function Dashboard() {
     <>
       <Header />
       <div className="max-w-2xl mx-auto p-4 pt-[10rem]">
-        <h1 className="text-2xl font-bold mb-4">Мої віджети</h1>
+        <h1 className="text-xl md:text-2xl font-bold mb-4">Мої віджети</h1>
         
         {loading ? (
           <Loader />
@@ -189,9 +189,9 @@ export default function Dashboard() {
             {widgets.map((widget) => (
               <li
                 key={widget.id}
-                className="flex items-center justify-between p-4 bg-gray-700 rounded-lg shadow hover:bg-gray-600 transition pointer"
+                className="flex p-4 bg-gray-700 rounded-lg shadow hover:bg-gray-600 gap-2 transition pointer flex-col md:flex-row justify-start items-start md:items-center md:justify-between "
               >
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 flex-col gap-2 md:flex-row justify-start items-start md:items-center md:justify-between">
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input
                       type="checkbox"
@@ -201,7 +201,7 @@ export default function Dashboard() {
                     />
                     <div className="relative w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-gray-300 after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                   </label>
-                  <span className="text-left font-bold ml-4 flex-1 min-w-0 overflow-hidden text-ellipsis">
+                  <span className="text-left font-bold flex-1 min-w-0 overflow-hidden text-ellipsis">
                     {widget.name}
                   </span>
                 </div>
@@ -218,7 +218,7 @@ export default function Dashboard() {
                     className="flex items-center space-x-2 text-white hover:text-blue-300 text-sm"
                   >
                     <span className="text-blue-400"><Funnel size={16} /></span>
-                    <span className="text-white">Відкрити заявки</span>
+                    <span className="text-white">заявки</span>
                   </a>
                   <a
                     onClick={() => handleOpenSettings(widget.id)}

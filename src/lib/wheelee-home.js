@@ -73,8 +73,43 @@
       wheelForm.className = "wheel-form";
       
       const canvas = document.createElement("canvas");
-      canvas.width = 550;
-      canvas.height = 550;
+
+      // let size = screenWidth <= 550 ? screenWidth : 550;
+
+      const openButton = document.createElement('div');
+        openButton.className = 'widget-open-btn';
+        document.body.appendChild(openButton);
+
+        openButton.addEventListener('click', () => {
+          openButton.classList.add('_hidden');
+          wheelWrap.classList.remove('_hidden');
+          wheelWrap.classList.add('_active');
+        });
+        const openDelay = options.autoOpenDelay * 1000
+        setTimeout(() => {
+          wheelWrap.classList.remove('_hidden');
+          wheelWrap.classList.add('_active');
+        }, openDelay || 10000);
+
+      function updateScreenWidth() {
+        const screenWidth = window.innerWidth;
+        console.log("Current width:", screenWidth);
+      
+        // приклад: адаптивна логіка
+          size = screenWidth <= 550 ? screenWidth : 550;
+          canvas.width = size;
+          canvas.height = size;
+          console.log(size)
+          drawWheel()
+      }
+      
+      
+      const maxSize = 550;
+      const screenWidth = window.innerWidth;
+      let size = Math.min(screenWidth, maxSize);
+      canvas.width = size;
+      canvas.height = size;
+      
       wheelWrap.appendChild(canvas);
       wheelWrap.appendChild(wheelForm);
     
@@ -86,6 +121,8 @@
 
       const activeBonuses = bonuses.filter(bonus => bonus.is_participating === true);
       const sliceAngle = (2 * Math.PI) / activeBonuses.length;
+
+      
 
       if (!stylesAdded) {
           const styles = document.createElement('style');
@@ -118,20 +155,7 @@
                 position: absolute;
                 left: -275px;
               }
-              .widget-open-btn {
-                position: fixed;
-                bottom: 20px;
-                left: 20px;
-                padding: 10px 20px;
-                background-color: #ff9900;
-                color: #fff;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                font-size: 16px;
-                z-index: 1000;
-                transition: background-color 0.3s ease;
-              }
+              
               .widget-open-btn:hover {
                   background-color: #e68a00;
                   transform: scale(1.05);
@@ -203,7 +227,10 @@
                   align-items: flex-start;
                   max-width: 400px;
               }
-  
+              .wheel-form-home {
+                position: absolute;
+                left: 325px;
+              }
               .form-title {
                   font-size: 24px;
                   font-weight: bold;
@@ -223,6 +250,17 @@
                   margin-top: 20px;
               }
   
+              .sr-only {
+                  position: absolute;
+                  width: 1px;
+                  height: 1px;
+                  padding: 0;
+                  margin: -1px;
+                  overflow: hidden;
+                  clip: rect(0, 0, 0, 0);
+                  white-space: nowrap;
+                  border-width: 0;
+              }
               .input-wrap {
                   width: 100%;
                   display: flex;
@@ -305,7 +343,7 @@
                 100% { transform: translateX(0); }
               }
 
-              .loader
+              .wheel-spin-loader {
                 margin: 0 auto;
               }
 
@@ -349,6 +387,56 @@
                 animation-name: reveal;
                 animation-direction: reverse;
               }
+
+              @media (max-width: 767px) {
+                .widget-wheel-wrap {
+                  flex-direction: column;
+                }
+
+                #wheelee-container canvas {
+                  position: absolute;
+                  top: -${size / 2}px;
+                  left: 50%;
+                  transform: translateX(-50%) rotate(90deg) scale(0.7);
+                  left: 50%;
+                }
+
+                .wheel-form {
+                  left: 50%;
+                  top: ${size / 2 + 80}px;
+                  transform: translateX(-50%);
+                  width: 90%;
+                  max-width: 400px;
+                }
+
+              }
+
+              .widget-open-btn {
+                  position: fixed;
+                  z-index: 999997;
+                  width: 100px;
+                  height: 100px;
+                  cursor: pointer;
+                  left: 10px;
+                  bottom: -30px;
+                  background: url(https://ptulighepuqttsocdovp.supabase.co/storage/v1/object/public/wheelee/gift.png) center center no-repeat;
+                  background-size: contain;
+                  transform-origin: right bottom;
+                  outline: 0;
+                  animation: shakeBox 0.12s ease-in-out 0s 2;
+                }
+
+                @keyframes shakeBox {
+                  0% {
+                      transform: rotate(0deg);
+                  }
+                  50% {
+                      transform: rotate(-6deg);
+                  }
+                  100% {
+                      transform: rotate(0deg);
+                  }
+                }
           `;
           document.head.appendChild(styles);
           stylesAdded = true;
@@ -387,6 +475,36 @@
         }
       }
 
+
+      // 🔹 Функція для переносу рядків
+      function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+        const words = text.split(' ');
+        let line = '';
+        const lines = [];
+
+        for (let n = 0; n < words.length; n++) {
+          const testLine = line + words[n] + ' ';
+          const metrics = ctx.measureText(testLine);
+          const testWidth = metrics.width;
+
+          if (testWidth > maxWidth && n > 0) {
+            lines.push(line.trim());
+            line = words[n] + ' ';
+          } else {
+            line = testLine;
+          }
+        }
+        lines.push(line.trim());
+
+        // Малюємо кожен рядок
+        const totalHeight = lines.length * lineHeight;
+        const offsetY = -(totalHeight / 2) + lineHeight / 2;
+
+        lines.forEach((l, i) => {
+          ctx.fillText(l, x + 40, y + offsetY + i * lineHeight);
+        });
+      }
+
       function drawWheel() {
         if (!ctx) return;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -416,10 +534,11 @@
           const textRadius = radius / 2;
           ctx.fillStyle = getContrastTextColor(baseColor);
           ctx.font = "16px Arial";
-          ctx.fillText(prize.value, textRadius + 40, 0);
+          const maxWidth = 165;
+          const lineHeight = 26;
+          const text = prize.value;
+          wrapText(ctx, text, textRadius, 0, maxWidth, lineHeight);
           ctx.restore();
-  
-          
         });
     
         // Коло в центрі
@@ -459,7 +578,7 @@
             (targetIndex * sliceAngle + sliceAngle / 2) +
             randomOffset;
         
-          const duration = 5000;
+          const duration = 500000;
           const start = performance.now();
           const initialRotation = rotation;
         
@@ -515,10 +634,9 @@
     
       function render() {
           wheelForm.innerHTML = "";
-
           if (spinning) {
             const loader = document.createElement("div");
-            loader.className = "loader";
+            loader.className = "wheel-spin-loader";
             loader.innerHTML = `
               <div class="dot dot1"></div>
               <div class="dot dot2"></div>
@@ -644,6 +762,7 @@
               const btn = document.createElement("button");
               btn.id = "spin_button";
               btn.textContent = buttonText;
+              btn.style = `color: ${getContrastTextColor(baseColor)}`
               btn.className = "widget-wheel-spin-btn";
               btn.style.backgroundColor = options.color;
               btn.addEventListener("click", () => {
@@ -678,6 +797,7 @@
           }
          
       }
+
       render();
       drawWheel();
       startIdleRotation();

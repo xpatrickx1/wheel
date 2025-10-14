@@ -128,9 +128,9 @@ export const Header: React.FC = () => {
             alt="Logo" 
           />
         </a>
-        <span className="font-bold box-border block ml-2.5">lp9</span>
+        <span className="font-bold box-border block ml-2.5">Wheelee</span>
       </div>
-      <div className="box-border">
+      <div className="box-border hidden md:flex">
         <nav className="flex align-center h-full"> 
           <ul className="flex gap-4">
             {links.map((link) => (
@@ -202,22 +202,26 @@ export const Header: React.FC = () => {
             isMenuOpen ? "max-h-[calc(100vh-56px)] h-screen" : "max-h-0"
           }`}
         >
-          <nav className="flex flex-col items-center p-6 gap-4">
-          {links.map((link) => (
-              <li key={link.id}>
-                <a 
-                  href={`/${link.href}`}
-                  onClick={(e) => handleLinkClick(link)}
-                  className={`
-                    ${link.id === "logout" ? "cursor-pointer" : ""}
-                    ${isLoading && link.id === "logout" ? "opacity-50" : ""}
-                  `}
-                  aria-disabled={isLoading && link.id === "logout"}
-                >
-                  {isLoading && link.id === "logout" ? "Выход..." : link.text}
-                </a>
-              </li>
-            ))}
+          <nav className="flex align-center h-full"> 
+            <ul className="flex gap-4">
+              {links.map((link) => (
+                <li key={link.id}>
+                  <a
+                    href={`/${link.href}`}
+                    onClick={(e) => handleLinkClick(link)}
+                    className={`
+                      ${link.id === "logout" ? "cursor-pointer" : ""}
+                      ${isLoading && link.id === "logout" ? "opacity-50" : ""}
+                    `}
+                    aria-disabled={isLoading && link.id === "logout"}
+                  >
+                    {isLoading && link.id === "logout"
+                      ? t("nav.loggingOut") || "Выход..."
+                      : t(`nav.${link.id}`)}
+                  </a>
+                </li>
+              ))}
+            </ul>
           </nav>
           
 		  
@@ -287,12 +291,12 @@ export const Header: React.FC = () => {
           }`}
         >
           <nav className="flex flex-col items-center p-6 gap-4">
-            {links.map((link) => (
-              <div key={link.id}>
+          {links.map((link) => (
+              <li key={link.id}>
                 <a 
                   href={`/${link.href}`}
                   onClick={(e) => handleLinkClick(link)}
-                  className={`justify-center h-auto p-0 text-lg font-medium text-white
+                  className={`
                     ${link.id === "logout" ? "cursor-pointer" : ""}
                     ${isLoading && link.id === "logout" ? "opacity-50" : ""}
                   `}
@@ -300,7 +304,7 @@ export const Header: React.FC = () => {
                 >
                   {isLoading && link.id === "logout" ? "Выход..." : link.text}
                 </a>
-              </div>
+              </li>
             ))}
           </nav>
           
