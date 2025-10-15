@@ -4,8 +4,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Header } from '../components/Header';
 import { HeroSection } from '../components/HeroSection';
 import { VideoSection } from '../components/VideoSection';
-import { WidgetTypes } from '../components/WidgetTypes';
+import { HelpSetupBanner } from '../components/HelpSetupBanner'
 import { HowItWorks } from '../components/HowItWorks';
+import { Statistic } from '../components/Statistic';
 import { BrandShowcase } from '../components/BrandShowcase';
 import { CallToAction } from '../components/CallToAction';
 import { PricingSection } from '../components/PricingSection';
@@ -28,12 +29,15 @@ function Home() {
   }
 
   return (
-    <div className="text-white text-base not-italic normal-nums font-light accent-auto bg-zinc-900 bg-no-repeat bg-size-[100%] box-border block tracking-[normal] leading-6 list-outside list-disc text-left indent-[0px] normal-case visible bg-[position:50%_top] border-separate font-raleway">
+    <div className="text-black text-base not-italic normal-nums font-light accent-auto bg-white bg-no-repeat bg-size-[100%] box-border block tracking-[normal] leading-6 list-outside list-disc text-left indent-[0px] normal-case visible bg-[position:50%_top] border-separate font-raleway">
       <Header />
       <HeroSection />
       <VideoSection />
-      <WidgetTypes />
+      <HelpSetupBanner />
       <HowItWorks />
+      <Statistic />
+
+
       <BrandShowcase />
       <CallToAction />
       <PricingSection />

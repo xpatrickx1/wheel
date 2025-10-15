@@ -17,12 +17,13 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
   text-decoration: inherit;
   cursor: pointer;
+  transition: all 0.3s ease-in-out;
+
 }
 a:hover {
-  color: #535bf2;
+  color: #046EF1;
 }
 
 #root {
@@ -450,3 +451,4 @@ body {
     opacity: 0
   }
 }
+
