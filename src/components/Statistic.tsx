@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from 'react-i18next';
 
 const statsData = [
   {
@@ -16,18 +17,17 @@ const statsData = [
 ];
 
 export const Statistic = () => {
+  const { t } = useTranslation();
+  const statsData = t("statsData", { returnObjects: true });
   return (
     <section className="w-full flex items-center justify-center px-4">
       <div className="flex flex-wrap items-center justify-between gap-8 max-w-[1046px] w-full">
         {statsData.map((stat, index) => (
           <div
             key={index}
-            className="flex flex-col items-center min-w-[244px] flex-1 translate-y-[-1rem] animate-fade-in opacity-0"
-            style={
-              { "--animation-delay": `${index * 200}ms` } as React.CSSProperties
-            }
+            className="flex flex-col items-center min-w-[244px] flex-1 translate-y-[-1rem] animate-fade-in "
           >
-            <div className="flex items-center justify-center [font-family:'Nunito_Sans',Helvetica] font-bold text-[#0571ee] text-[99px] text-center tracking-[1.98px] leading-[150.1px]">
+            <div className="flex items-center justify-center [font-family:'Nunito_Sans',Helvetica] font-bold text-[#0571ee] text-7xl xl:text-[99px] text-center tracking-[1.98px] leading-[90px]  xl:leading-[150px]">
               {stat.value}
             </div>
 

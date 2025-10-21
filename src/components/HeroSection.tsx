@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next';
 export function HeroSection() {
   const { t } = useTranslation();
   return (
-    <div className="box-border text-center pt-[190px]">
+    <div className="box-border text-center pt-[150px] md:pt-[190px]">
       <div className="box-border flex flex-wrap max-w-none w-full mx-auto px-[15px] md:max-w-[1140px]">
-        <div className="relative box-border basis-0 grow max-w-full min-h-px w-full px-[15px]">
+        <div className="relative box-border basis-0 grow max-w-full min-h-px w-full md:px-[15px]">
           <h1 className="text-4xl font-medium box-border leading-[43.2px] mb-3.5">
             {t('pageTitle')}
           </h1>

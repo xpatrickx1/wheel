@@ -6,12 +6,14 @@ import { HeroSection } from '../components/HeroSection';
 import { VideoSection } from '../components/VideoSection';
 import { HelpSetupBanner } from '../components/HelpSetupBanner'
 import { HowItWorks } from '../components/HowItWorks';
+import { Integration } from '../components/Integration';
 import { Statistic } from '../components/Statistic';
-import { BrandShowcase } from '../components/BrandShowcase';
 import { CallToAction } from '../components/CallToAction';
 import { PricingSection } from '../components/PricingSection';
 import { Footer } from '../components/Footer';
 // import { Wheel } from '../components/Wheel';
+import createWheel from '../lib/wheelee-home';
+import { defaultWidgetSettings } from '../lib/defaultSettings';
 
 function Home() {
   const [isWheelOpen, setIsWheelOpen] = useState(false);
@@ -27,7 +29,7 @@ function Home() {
     //   theWheel.draw(); // Перемальовуємо колесо в початковому стані
     // }
   }
-
+  // createWheel("wheelee-container", defaultWidgetSettings)
   return (
     <div className="text-black text-base not-italic normal-nums font-light accent-auto bg-white bg-no-repeat bg-size-[100%] box-border block tracking-[normal] leading-6 list-outside list-disc text-left indent-[0px] normal-case visible bg-[position:50%_top] border-separate font-raleway">
       <Header />
@@ -35,10 +37,9 @@ function Home() {
       <VideoSection />
       <HelpSetupBanner />
       <HowItWorks />
+      <Integration />
       <Statistic />
 
-
-      <BrandShowcase />
       <CallToAction />
       <PricingSection />
       <Footer />

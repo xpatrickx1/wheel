@@ -11,14 +11,14 @@ export function VideoSection() {
           <video className="box-border relative z-10 max-w-[800px] w-full overflow-hidden my-20 rounded-[17px]" autoPlay loop muted width="100%">
             <source src={vid} type="video/mp4" />
           </video>
-          <div className="absolute inset-0 z-0 -top-[24px] left-[24px] bottom-[66px] -right-[24px] rounded-2xl pointer-events-none
+          <div className="absolute inset-0 z-0 -top-[14px] md:-top-[24px] left-[24px] bottom-[66px] -right-[14px] md:-right-[24px] rounded-2xl pointer-events-none
             [border:1px_solid_transparent]
             [background:linear-gradient(112.2deg,#005EFF_22.2%,#0C91D3_105.31%)_border-box]
             [mask:linear-gradient(#fff_0_0)_padding-box,linear-gradient(#fff_0_0)]
             [mask-composite:exclude] before:absolute before:inset-0 before:rounded-2xl before:p-[1px] before:bg-white before:-z-10
           "></div>
         </div>
-        <h3 className="text-[27px]  font-bold box-border leading-12 max-w-[800px] text-center mb-[100px] mx-auto">
+        <h3 className="text-[23px] md:text-[27px]  font-bold box-border leading-10 md:leading-12 max-w-[800px] text-center mb-[60px] md:mb-[100px] mx-auto">
           <Trans
             i18nKey="videoSection"
             components={{

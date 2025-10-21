@@ -1,111 +1,83 @@
-(async () => {
-  try {
+
+  export default  function createWheel(containerId, options) {
+    const API_BASE = "https://ptulighepuqttsocdovp.supabase.co";
     let widgetId;
 
-    if (window.wheeleeSlug) {
-      const API_BASE = "https://ptulighepuqttsocdovp.supabase.co";
-      const response = await fetch(`${API_BASE}/functions/v1/get-widget-id/${window.wheeleeSlug}`);
-      if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      const data = await response.json();
-      if (!data.id) throw new Error("Widget ID not found");
-      widgetId = data.id;
-    } else {
-      console.error("wheeleeKey or wheeleeSlug required");
-      return;
-    }
-    console.log('widgetId', widgetId)
-    const API_BASE = "https://ptulighepuqttsocdovp.supabase.co";
-    // Підвантажуємо налаштування за id
-    fetch(`${API_BASE}/functions/v1/get-widget/${widgetId}`)
-      .then((r) => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}: ${r.statusText}`);
-        console.log('get-widget-id r', r)
-        return r.json();
-      })
-      .then((widget) => {
-        if (!widget || widget.error) throw new Error(widget.error || "Widget not found");
-        createWheel({ ...widget.settings });
-      })
-      .catch((err) => console.error("Widget load error:", err));
-
-    function createWheel(options) {
-      let stylesAdded = false;
-        function hexToRgb(hex) {
-            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-            return result ? {
-              r: parseInt(result[1], 16),
-              g: parseInt(result[2], 16),
-              b: parseInt(result[3], 16)
-            } : { r: 0, g: 0, b: 0 };
-        }
-          
-        function rgbToHex(r, g, b) {
-            return "#" + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
-        }
+    let stylesAdded = false;
+      function hexToRgb(hex) {
+          const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+          return result ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16)
+          } : { r: 0, g: 0, b: 0 };
+      }
         
-        function darkenColor(hex, percent) {
-            const rgb = hexToRgb(hex);
-            const factor = 1 - percent / 100;
-            const r = Math.round(rgb.r * factor);
-            const g = Math.round(rgb.g * factor);
-            const b = Math.round(rgb.b * factor);
-            return rgbToHex(r, g, b);
-        }
-
-        function getContrastTextColor(bgColor) {
-          let r, g, b;
-        
-          // Якщо формат rgb(...)
-          if (bgColor.startsWith('rgb')) {
-            const rgb = bgColor.match(/\d+/g).map(Number);
-            [r, g, b] = rgb;
-          } 
-          // Якщо формат HEX (#RRGGBB або #RGB)
-          else {
-            let hex = bgColor.replace('#', '');
-            if (hex.length === 3) {
-              hex = hex.split('').map(c => c + c).join('');
-            }
-            const bigint = parseInt(hex, 16);
-            r = (bigint >> 16) & 255;
-            g = (bigint >> 8) & 255;
-            b = bigint & 255;
-          }
-        
-          const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-        
-          // Поріг можна трохи регулювати: 128 — універсальний, 150 — для темних кольорів
-          return brightness > 150 ? '#000000' : '#ffffff';
-        }
-    
-        const { bonuses, color, buttonText, collectData } = options;
-        const baseColor = color || '#eb112a';
-        const darkerColor = darkenColor(baseColor, 20);
-        const openDelay = options.autoOpenDelay * 1000
-
-        const container = document.getElementById("wheelee-container") ? document.getElementById("wheelee-container") : document.body;
-        if (!container) return;
+      function rgbToHex(r, g, b) {
+          return "#" + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
+      }
       
-        const existingWheel = document.querySelector('.widget-wheel-wrap');
-        if (existingWheel) {
-            console.warn('Колесо вже існує на сторінці. Видаляю старе...');
-            existingWheel.remove();
-        }
-    
-        const wheelWrap = document.createElement("div");
-        wheelWrap.className = "widget-wheel-wrap _hidden";
-        // wheelWrap.classList.add('_hidden');
-        container.appendChild(wheelWrap);
-        
-        const existingOpenBtn = document.querySelector('.widget-open-btn');
-        if (existingOpenBtn) {
-            console.warn('Кнопка вже існує на сторінці. Видаляю старе...');
-            existingOpenBtn.remove();
-        }
+      function darkenColor(hex, percent) {
+          const rgb = hexToRgb(hex);
+          const factor = 1 - percent / 100;
+          const r = Math.round(rgb.r * factor);
+          const g = Math.round(rgb.g * factor);
+          const b = Math.round(rgb.b * factor);
+          return rgbToHex(r, g, b);
+      }
 
-        const openButton = document.createElement('div');
+      function getContrastTextColor(bgColor) {
+        let r, g, b;
+      
+        // Якщо формат rgb(...)
+        if (bgColor.startsWith('rgb')) {
+          const rgb = bgColor.match(/\d+/g).map(Number);
+          [r, g, b] = rgb;
+        } 
+        // Якщо формат HEX (#RRGGBB або #RGB)
+        else {
+          let hex = bgColor.replace('#', '');
+          if (hex.length === 3) {
+            hex = hex.split('').map(c => c + c).join('');
+          }
+          const bigint = parseInt(hex, 16);
+          r = (bigint >> 16) & 255;
+          g = (bigint >> 8) & 255;
+          b = bigint & 255;
+        }
+      
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+      
+        // Поріг можна трохи регулювати: 128 — універсальний, 150 — для темних кольорів
+        return brightness > 150 ? '#000000' : '#ffffff';
+      }
+  
+      const { bonuses, color, buttonText, collectData } = options;
+      const baseColor = color || '#eb112a';
+      const darkerColor = darkenColor(baseColor, 20);
+      const container = document.getElementById("wheelee-container") ? document.getElementById("wheelee-container") : document.body;
+      // const container = document.body;
+      if (!container) return;
+    
+      const existingWheel = document.querySelector('.widget-wheel-wrap');
+      if (existingWheel) {
+          console.warn('Колесо вже існує на сторінці. Видаляю старе...');
+          existingWheel.remove();
+      }
+  
+      const wheelWrap = document.createElement("div");
+      wheelWrap.className = "widget-wheel-wrap";
+      container.appendChild(wheelWrap);
+      
+      const wheelForm = document.createElement("div");
+      wheelForm.className = "wheel-form";
+      
+      const canvas = document.createElement("canvas");
+
+      // let size = screenWidth <= 550 ? screenWidth : 550;
+
+      const openButton = document.createElement('div');
         openButton.className = 'widget-open-btn';
-        openButton.textContent = 'Відкрити віджет';
         document.body.appendChild(openButton);
 
         openButton.addEventListener('click', () => {
@@ -113,45 +85,49 @@
           wheelWrap.classList.remove('_hidden');
           wheelWrap.classList.add('_active');
         });
-
+        const openDelay = options.autoOpenDelay * 1000
         setTimeout(() => {
           wheelWrap.classList.remove('_hidden');
           wheelWrap.classList.add('_active');
         }, openDelay || 10000);
 
-        const closeButton = document.createElement('button');
-        closeButton.className = 'widget-close-btn';
-        closeButton.innerHTML = '✕'; 
-        wheelWrap.appendChild(closeButton);
-
-        closeButton.addEventListener('click', () => {
-          wheelWrap.classList.remove('_active');
-          openButton.classList.remove('_hidden');
-          wheelWrap.classList.add('_hidden');
-        });
-        
-        const wheelForm = document.createElement("div");
-        wheelForm.className = "wheel-form";
-        
-        const canvas = document.createElement("canvas");
-        canvas.width = 550;
-        canvas.height = 550;
-        wheelWrap.appendChild(canvas);
-        wheelWrap.appendChild(wheelForm);
-
-        const ctx = canvas.getContext("2d");
-        if (!ctx) return;
-        
-        const center = canvas.width / 2;
-        const radius = center - 10;
-
-        const activeBonuses = bonuses.filter(bonus => bonus.is_participating === true);
-        const sliceAngle = (2 * Math.PI) / activeBonuses.length;
+      function updateScreenWidth() {
+        const screenWidth = window.innerWidth;
+        console.log("Current width:", screenWidth);
       
-        if (!stylesAdded) {
-            const styles = document.createElement('style');
-            styles.id = 'widget-wheel-styles';
-            styles.textContent = `
+        // приклад: адаптивна логіка
+          size = screenWidth <= 550 ? screenWidth : 550;
+          canvas.width = size;
+          canvas.height = size;
+          console.log(size)
+          drawWheel()
+      }
+      
+      
+      const maxSize = 550;
+      const screenWidth = window.innerWidth;
+      let size = Math.min(screenWidth, maxSize);
+      canvas.width = size;
+      canvas.height = size;
+      
+      wheelWrap.appendChild(canvas);
+      wheelWrap.appendChild(wheelForm);
+    
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+      
+      const center = canvas.width / 2;
+      const radius = center - 10;
+
+      const activeBonuses = bonuses.filter(bonus => bonus.is_participating === true);
+      const sliceAngle = (2 * Math.PI) / activeBonuses.length;
+
+      
+
+      if (!stylesAdded) {
+          const styles = document.createElement('style');
+          styles.id = 'widget-wheel-styles';
+          styles.textContent = `
                 .widget-wheel-wrap {
                     display: flex;
                     align-items: center;
@@ -450,45 +426,45 @@
                   }
                 }
             `;
-            document.head.appendChild(styles);
-            stylesAdded = true;
-        }
+          document.head.appendChild(styles);
+          stylesAdded = true;
+      }
+    
+      let rotation = 0;
+      let spinning = false;
+      let prize = null;
+      let contact = "";
+      let isPolicyAccepted = false;
+      let isInputValid = false;
+      let idleRotation = 0;
+      let idleAnimationId = null;
+    
+      function startIdleRotation(speed = 0.002) {
+        if (idleAnimationId) return;
       
-        let rotation = 0;
-        let spinning = false;
-        let prize = null;
-        let contact = "";
-        let isPolicyAccepted = false;
-        let isInputValid = false;
-        let idleRotation = 0;
-        let idleAnimationId = null;
-      
-        function startIdleRotation(speed = 0.002) {
-          if (idleAnimationId) return;
-        
-          function animateIdle() {
-            if (spinning) {
-              idleAnimationId = null;
-              return;
-            }
-            rotation += speed;
-            if (Math.abs(rotation) > 1e6) rotation = rotation % TWO_PI;
-            drawWheel();
-            idleAnimationId = requestAnimationFrame(animateIdle);
+        function animateIdle() {
+          if (spinning) {
+            idleAnimationId = null;
+            return;
           }
-        
+          rotation += speed;
+          if (Math.abs(rotation) > 1e6) rotation = rotation % TWO_PI;
+          drawWheel();
           idleAnimationId = requestAnimationFrame(animateIdle);
         }
-        
-        function stopIdleRotation() {
-          if (idleAnimationId) {
-            cancelAnimationFrame(idleAnimationId);
-            idleAnimationId = null;
-          }
+      
+        idleAnimationId = requestAnimationFrame(animateIdle);
+      }
+      
+      function stopIdleRotation() {
+        if (idleAnimationId) {
+          cancelAnimationFrame(idleAnimationId);
+          idleAnimationId = null;
         }
-  
-        
-        // 🔹 Функція для переносу рядків
+      }
+
+
+      // 🔹 Функція для переносу рядків
       function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
         const words = text.split(' ');
         let line = '';
@@ -516,9 +492,6 @@
           ctx.fillText(l, x + 40, y + offsetY + i * lineHeight);
         });
       }
-
-
-
 
       function drawWheel() {
         if (!ctx) return;
@@ -554,36 +527,34 @@
           const text = prize.value;
           wrapText(ctx, text, textRadius, 0, maxWidth, lineHeight);
           ctx.restore();
-    
-            
         });
-      
-          // Коло в центрі
-          ctx.save();
-          ctx.shadowColor = "rgba(0,0,0,0.2)"; 
-          ctx.shadowBlur = 8;
-          ctx.shadowOffsetX = 0;
-          ctx.shadowOffsetY = 2;
-          ctx.beginPath();
-          ctx.arc(center, center, 60, 0, 2 * Math.PI);
-          ctx.fillStyle = "#fff";
-          ctx.fill();
-          ctx.restore();
-          // Стрілка
-          ctx.shadowColor = "rgba(0, 0, 0, 0.2)";
-          ctx.shadowBlur = 3;
-          ctx.shadowOffsetX = -3;
-          ctx.shadowOffsetY = 3;
-          ctx.fillStyle = "#fff";
-          ctx.beginPath();
-          ctx.moveTo(center + radius + 7, center - 15);   
-          ctx.lineTo(center + radius + 7, center + 15);   
-          ctx.lineTo(center + radius - 35, center);      
-          ctx.closePath();
-          ctx.fill();
-        }
-      
-        function spin() {
+    
+        // Коло в центрі
+        ctx.save();
+        ctx.shadowColor = "rgba(0,0,0,0.2)"; 
+        ctx.shadowBlur = 8;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 2;
+        ctx.beginPath();
+        ctx.arc(center, center, 60, 0, 2 * Math.PI);
+        ctx.fillStyle = "#fff";
+        ctx.fill();
+        ctx.restore();
+        // Стрілка
+        ctx.shadowColor = "rgba(0, 0, 0, 0.2)";
+        ctx.shadowBlur = 3;
+        ctx.shadowOffsetX = -3;
+        ctx.shadowOffsetY = 3;
+        ctx.fillStyle = "#fff";
+        ctx.beginPath();
+        ctx.moveTo(center + radius + 7, center - 15);   
+        ctx.lineTo(center + radius + 7, center + 15);   
+        ctx.lineTo(center + radius - 35, center);      
+        ctx.closePath();
+        ctx.fill();
+      }
+    
+      function spin() {
           if (spinning) return;
           spinning = true;
           stopIdleRotation();
@@ -595,7 +566,7 @@
             (targetIndex * sliceAngle + sliceAngle / 2) +
             randomOffset;
         
-          const duration = 5000;
+          const duration = 500000;
           const start = performance.now();
           const initialRotation = rotation;
         
@@ -647,50 +618,50 @@
         
           requestAnimationFrame(animate);
       }
+    
+    
+      function render() {
+          wheelForm.innerHTML = "";
+          if (spinning) {
+            const loader = document.createElement("div");
+            loader.className = "wheel-spin-loader";
+            loader.innerHTML = `
+              <div class="dot dot1"></div>
+              <div class="dot dot2"></div>
+              <div class="dot dot3"></div>
+              <div class="dot dot4"></div>
+            `;
+            wheelForm.appendChild(loader);
+          } 
       
-        function render() {
-            wheelForm.innerHTML = "";
-
-            if (spinning) {
-              const loader = document.createElement("div");
-              loader.className = "wheel-spin-loader";
-              loader.innerHTML = `
-                <div class="dot dot1"></div>
-                <div class="dot dot2"></div>
-                <div class="dot dot3"></div>
-                <div class="dot dot4"></div>
-              `;
-              wheelForm.appendChild(loader);
-            } 
-
-            if (!spinning) {
-              if (!prize) {
-                // Форма
-                const wrap = document.createElement("div");
-                wrap.className = "form-wrap";
-          
-                if (options.title) {
-                  const title = document.createElement("div");
-                  title.className = "wheel-form-title";
-                  title.textContent = options.title;
-                  wrap.appendChild(title);
-                }
-          
-                if (options.subtitle) {
-                  const p = document.createElement("p");
-                  p.className = "wheel-form-subtitle";
-                  p.textContent = options.subtitle;
-                  wrap.appendChild(p);
-                }
-          
-                const form = document.createElement("form");
-                form.className = "form";
-                form.addEventListener("submit", e => e.preventDefault());
-          
-                // email input
-                const divInput = document.createElement("div");
-                divInput.className = "input-wrap";
-      
+          if (!spinning) {
+            if (!prize) {
+              // Форма
+              const wrap = document.createElement("div");
+              wrap.className = "form-wrap";
+        
+              if (options.title) {
+                const title = document.createElement("div");
+                title.className = "form-title";
+                title.textContent = options.title;
+                wrap.appendChild(title);
+              }
+        
+              if (options.subtitle) {
+                const p = document.createElement("p");
+                p.className = "form-subtitle";
+                p.textContent = options.subtitle;
+                wrap.appendChild(p);
+              }
+        
+              const form = document.createElement("form");
+              form.className = "form";
+              form.addEventListener("submit", e => e.preventDefault());
+        
+              // email input
+              const divInput = document.createElement("div");
+              divInput.className = "input-wrap";
+    
               const input = document.createElement("input");
               input.value = contact;
               input.type = collectData === "email" ? "email" : "tel";
@@ -698,8 +669,8 @@
               input.className = "form-input";
               input.addEventListener("input", e => contact = e.target.value);
               divInput.appendChild(input);
-      
-              // Валідація
+    
+            // Валідація
               function validateInput() {
       
                 if (collectData === "email") {
@@ -721,7 +692,7 @@
       
                 return isInputValid;
               }
-      
+    
               function validatePolicy() {
                 if (!isPolicyAccepted) {
                   setTimeout(() => {
@@ -734,89 +705,88 @@
       
                 return isPolicyAccepted;
               }
-      
+    
               input.addEventListener("blur", validateInput);
-          
-                // чекбокс
-                const divCheckWrap = document.createElement("div");
-                divCheckWrap.className = "checkbox-wrap";
-          
-                const divCheck = document.createElement("div");
-          
-                const label = document.createElement("label");
-                label.className = "form-label";
-          
-                const checkbox = document.createElement("input");
-                checkbox.type = "checkbox";
-                checkbox.className = "sr-only peer";
-                checkbox.addEventListener("change", () => {
-                  isPolicyAccepted = checkbox.checked;
-                  if (isPolicyAccepted) {
-                      box.classList.add("checked");
-                  }
-                  render();
-                });
-          
-                const box = document.createElement("div");
-                box.className = "checkbox-box";
+        
+              // чекбокс
+              const divCheckWrap = document.createElement("div");
+              divCheckWrap.className = "checkbox-wrap";
+        
+              const divCheck = document.createElement("div");
+        
+              const label = document.createElement("label");
+              label.className = "form-label";
+        
+              const checkbox = document.createElement("input");
+              checkbox.type = "checkbox";
+              checkbox.className = "sr-only peer";
+              checkbox.addEventListener("change", () => {
+                isPolicyAccepted = checkbox.checked;
                 if (isPolicyAccepted) {
-                  box.classList.add("checked");
+                    box.classList.add("checked");
                 }
-                checkbox.checked = isPolicyAccepted;
-      
-                label.appendChild(checkbox);
-                label.appendChild(box);
-                divCheck.appendChild(label);
-          
-                const policyText = document.createElement("div");
-                policyText.className = "policy-text";
-                policyText.innerHTML = `Я даю своё <a href="#" class="" target="_blank">Cогласие</a> на обработку персональных данных и подтверждаю ознакомление с <a href="${options.privacyUrl}" class="" target="_blank">Политикой</a> обработки персональных данных`;
-          
-                divCheckWrap.appendChild(divCheck);
-                divCheckWrap.appendChild(policyText);
-          
-                // кнопка
-                const btn = document.createElement("button");
-                btn.id = "spin_button";
-                btn.textContent = buttonText;
-                btn.style = `color: ${getContrastTextColor(baseColor)}`
-                btn.className = "widget-wheel-spin-btn";
-                btn.style.backgroundColor = options.color;
-                btn.addEventListener("click", () => {
-                  if (!isPolicyAccepted || !validateInput()) {
-                    validatePolicy()
-                    validateInput()
-                    return;
-                  }
-                  spin();
-                });
-          
-                form.appendChild(divInput);
-                form.appendChild(divCheckWrap);
-                form.appendChild(btn);
-          
-                wrap.appendChild(form);
-                wheelForm.appendChild(wrap);
-              } else {
-                // Екран з результатом
-                const prizeText = document.createElement("div");
-                prizeText.className = "widget-prize-title";
-                prizeText.textContent = prize;
-          
-                const msg = document.createElement("div");
-                msg.className = "widget-prize-text";
-                msg.textContent = options.successMessage;
-          
-                wheelForm.appendChild(prizeText);
-                wheelForm.appendChild(msg);
+                render();
+              });
+        
+              const box = document.createElement("div");
+              box.className = "checkbox-box";
+              if (isPolicyAccepted) {
+                box.classList.add("checked");
               }
+              checkbox.checked = isPolicyAccepted;
+    
+              label.appendChild(checkbox);
+              label.appendChild(box);
+              divCheck.appendChild(label);
+        
+              const policyText = document.createElement("div");
+              policyText.className = "policy-text";
+              policyText.innerHTML = `Я даю своё <a href="#" class="" target="_blank">Cогласие</a> на обработку персональных данных и подтверждаю ознакомление с <a href="${options.privacyUrl}" class="" target="_blank">Политикой</a> обработки персональных данных`;
+        
+              divCheckWrap.appendChild(divCheck);
+              divCheckWrap.appendChild(policyText);
+        
+              // кнопка
+              const btn = document.createElement("button");
+              btn.id = "spin_button";
+              btn.textContent = buttonText;
+              btn.style = `color: ${getContrastTextColor(baseColor)}`
+              btn.className = "widget-wheel-spin-btn";
+              btn.style.backgroundColor = options.color;
+              btn.addEventListener("click", () => {
+                if (!isPolicyAccepted || !validateInput()) {
+                  validatePolicy()
+                  validateInput()
+                  return;
+                }
+                spin();
+                render();
+              });
+        
+              form.appendChild(divInput);
+              form.appendChild(divCheckWrap);
+              form.appendChild(btn);
+        
+              wrap.appendChild(form);
+              wheelForm.appendChild(wrap);
+            } else {
+              // Екран з результатом
+              const prizeText = document.createElement("div");
+              prizeText.className = "widget-prize-title";
+              prizeText.textContent = prize;
+        
+              const msg = document.createElement("div");
+              msg.className = "widget-prize-text";
+              msg.textContent = options.successMessage;
+        
+              wheelForm.appendChild(prizeText);
+              wheelForm.appendChild(msg);
             }
-        }
-        render();
-        drawWheel();
-        startIdleRotation();
-    }
-  } catch (e) {
-    console.error('widget init err', e);
+          }
+         
+      }
+
+      render();
+      drawWheel();
+      startIdleRotation();
   }
-})();
