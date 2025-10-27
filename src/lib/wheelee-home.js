@@ -410,6 +410,33 @@
                 }
 
               }
+
+              .widget-open-btn {
+                  position: fixed;
+                  z-index: 999997;
+                  width: 100px;
+                  height: 100px;
+                  cursor: pointer;
+                  left: 10px;
+                  bottom: -30px;
+                  background: url(https://ptulighepuqttsocdovp.supabase.co/storage/v1/object/public/wheelee/gift.png) center center no-repeat;
+                  background-size: contain;
+                  transform-origin: right bottom;
+                  outline: 0;
+                  animation: shakeBox 0.12s infinity 0s 2;
+                }
+
+                @keyframes shakeBox {
+                  0% {
+                      transform: rotate(0deg);
+                  }
+                  50% {
+                      transform: rotate(-6deg);
+                  }
+                  100% {
+                      transform: rotate(0deg);
+                  }
+                }
           `;
           document.head.appendChild(styles);
           stylesAdded = true;

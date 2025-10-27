@@ -8,8 +8,8 @@ import { HelpSetupBanner } from '../components/HelpSetupBanner'
 import { HowItWorks } from '../components/HowItWorks';
 import { Integration } from '../components/Integration';
 import { Statistic } from '../components/Statistic';
-import { CallToAction } from '../components/CallToAction';
 import { PricingSection } from '../components/PricingSection';
+import { BannerTry } from '../components/BannerTry';
 import { Footer } from '../components/Footer';
 // import { Wheel } from '../components/Wheel';
 import createWheel from '../lib/wheelee-home';
@@ -39,44 +39,18 @@ function Home() {
       <HowItWorks />
       <Integration />
       <Statistic />
+      <PricingSection/>
+      <BannerTry />
+<iframe src="https://ptulighepuqttsocdovp.supabase.co/storage/v1/object/public/wheelee/wheelee-min.js" width="100%" height="600" frameborder="0"></iframe>
+      {/* <div className="widget-wheel-wrapper _hidden">
 
-      <CallToAction />
-      <PricingSection />
+      </div> */}
+
+
+
+
       <Footer />
       
-
-      {/* Панель з колесом фортуни */}
-      <div
-        className={`fixed top-0 left-0 h-full bg-white shadow-lg transform transition-transform duration-300 ease-in-out ${
-          isWheelOpen ? '-translate-x-0' : '-translate-x-full'
-        } w-96 z-20`}
-      >
-        <div className="p-4">
-          {/* Кнопка закриття */}
-          <button
-            onClick={handleCloseWheel}
-            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-          >
-            <span className="text-2xl">&times;</span>
-          </button>
-
-          {/* <Wheel /> */}
-        </div>
-      </div>
-
-      {/* Накладка для закриття при кліку поза панеллю (опціонально) */}
-      {isWheelOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-10"
-          onClick={handleCloseWheel}
-        ></div>
-      )}
-
-      
-      {/* Fixed elements */}
-      
-      
-      <a onClick={handleOpenWheel} className="pointer fixed  bg-no-repeat bg-contain bottom-[-30px] box-border h-[100px] rotate-[-2.0217276999269016deg] origin-[100%_100%] w-[100px] z-[999997] bg-center left-2.5 md:rotate-[-0.3380583823752766deg]"></a>
     </div>
   );
 }

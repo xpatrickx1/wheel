@@ -2,6 +2,7 @@
 import React from "react";
 import { useTranslation, Trans } from 'react-i18next';
 import giftImg from "../assets/img/gift2.png"; 
+import hwwBg from "../assets/img/hwwBg.png"; 
 import step1 from "../assets/img/01.svg"; 
 import step2 from "../assets/img/02.svg"; 
 import step3 from "../assets/img/03.svg"; 
@@ -19,12 +20,7 @@ type hwwSteps = {
 export function HowItWorks() {
   const { t } = useTranslation();
   const steps = t("steps", { returnObjects: true }) as hwwSteps[];
-  const exchangeSteps = steps.map((step, index) => ({
-    number: (index + 1).toString(),
-    title: step.title,
-    text: step.text,
-    maxWidth: ["max-w-3xs", "max-w-2xs", "max-w-2xs", "max-w-xs"][index],
-  }));
+  
   return (
     <section className="bg-[#EFEFEF] py-18">
       <div className="max-w-[1582px] mx-auto px-4">
@@ -59,18 +55,22 @@ export function HowItWorks() {
             </div>
           ))}
 
-          {/* Блок із кнопкою - займає 2 колонки */}
-          <div className="relative min-h-[370px] bg-gradient-to-br bg-[linear-gradient(112.2deg,rgba(0,94,255,0.1)_22.2%,rgba(12,145,211,0.1)_105.31%)] rounded-xl flex flex-col items-center justify-center p-6 col-span-2 lg:col-span-2">
+          <div className="relative min-h-[370px] bg-gradient-to-br bg-[linear-gradient(112.2deg,rgba(0,94,255,0.1)_22.2%,rgba(12,145,211,0.1)_105.31%)] bg-cover bg-no-repeat rounded-xl flex flex-col items-center justify-center p-6 col-span-2 lg:col-span-2"
+          style={{
+            backgroundImage: `linear-gradient(112.2deg, rgba(0,94,255,0.1) 22.2%, rgba(12,145,211,0.1) 105.31%), url(${hwwBg})`,
+          }}>
             <div className="relative">
               <img
                 src={giftImg}
                 alt="Подарок"
                 className="w-24 mb-4 absolute bottom-2 -right-10 md:-right-12"
               />
+              
               <a href="sign-up" className="box-border relative text-white text-lg bg-indigo-600 w-fit  bg-[linear-gradient(112.2deg,_#005EFF_22.2%,_#0C91D3_105.31%)] shadow-[rgba(43,62,229,0.15)_0px_15px_18px_0px,rgba(93,225,151,0.004)_0px_2px_0px_0px_inset] inline-block overflow-hidden px-[35px] py-5 rounded-[17px]">
                   {t('startBtn')}
               </a>
             </div>
+            
           </div>
         </div>
       </div>

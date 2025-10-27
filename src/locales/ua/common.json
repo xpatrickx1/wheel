@@ -19,6 +19,9 @@
 
   "helpBannerTitle" : "Допоможемо з налаштуванням",
   "helpBannerSubtitle" : "Зареєструйтесь та напишіть у техпідтримку, наші менеджери допоможуть інтегрувати віджет на ваш сайт.",
+
+  "bannerTryTitle" : "Спробуйте безкоштовно зараз",
+  "bannerTryBtn" : "Зареєструватися",
   
   "integrationBlockTitle" : "Наш віджет використовують <highlight1>великі бренди</highlight1>",
   "integrationBannerTitle" : "Проста інтеграція на ваш сайт",

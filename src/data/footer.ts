@@ -6,9 +6,8 @@ export interface FooterLink {
   }
   
   export const footerLinks: FooterLink[] = [
-    { id: 'consent', text: 'Согласие на обработку персональных данных', href: 'rules/consent', addBreak: true },
-    { id: 'policy', text: 'Политика обработки персональных данных', href: 'rules/politika', addBreak: true },
+    { id: 'consent', text: 'Согласие на обработку персональных данных', href: 'rules/consent'},
+    { id: 'policy', text: 'Политика обработки персональных данных', href: 'rules/politika'},
     { id: 'offer', text: 'Договор-оферта', href: 'rules/oferta' },
-    { id: 'email', text: 'info@wheelee.com', href: 'mailto://info@wheelee.com' }
   ] as const;
   
