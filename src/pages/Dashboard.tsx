@@ -6,6 +6,8 @@ import { ModalSettings } from '../components/ModalSettings';
 import { defaultWidgetSettings, WidgetSettings } from '../lib/defaultSettings';
 import { Eye, Funnel, Settings } from 'lucide-react';
 import Loader from '../ui/loader';
+import { useTheme } from '../theme/ThemeContext';
+import { useTranslation } from 'react-i18next';
 
 interface Widget {
   id: string;
@@ -17,6 +19,8 @@ interface Widget {
 }
 
 export default function Dashboard() {
+  const { t } = useTranslation();
+  const { isLigth } = useTheme();
   const [widgets, setWidgets] = useState<Widget[]>([]);
   const [loading, setLoading] = useState(true);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -179,7 +183,7 @@ export default function Dashboard() {
     <>
       <Header />
       <div className="max-w-2xl mx-auto p-4 pt-[10rem]">
-        <h1 className="text-xl md:text-2xl font-bold mb-4">Мої віджети</h1>
+        <h1 className={`text-xl md:text-2xl font-bold mb-8 ${isLigth ? "text-black" : "text-[#99A1BA]"}`}>{t("dashboardTitle")}</h1>
         
         {loading ? (
           <Loader />
@@ -189,9 +193,11 @@ export default function Dashboard() {
             {widgets.map((widget) => (
               <li
                 key={widget.id}
-                className="flex p-4 bg-gray-700 rounded-lg shadow hover:bg-gray-600 gap-2 transition pointer flex-col md:flex-row justify-start items-start md:items-center md:justify-between "
+                className= {`flex p-4 bg-gray-700 rounded-lg shadow hover:bg-gray-600 gap-2 transition pointer flex-col md:flex-row justify-start items-start md:items-center md:justify-between
+                  ${isLigth ? "bg-[#FFFFFF]" : "bg-[#0B0E16]"}`
+                  }
               >
-                <div className="flex items-center space-x-2 flex-col gap-2 md:flex-row justify-start items-start md:items-center md:justify-between">
+                <div className="flex space-x-2 flex-col gap-2 md:flex-row justify-start items-start md:items-center md:justify-between">
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input
                       type="checkbox"
@@ -211,21 +217,21 @@ export default function Dashboard() {
                     className="flex items-center space-x-2 text-blue-500"
                   >
                     <span className="text-blue-400"><Eye size={16} /></span>
-                    <span className="text-white">Відкрити</span>
+                    <span className="text-white">{t("dashboardOpen")}</span>
                   </a>
                   <a
                     href={`/leads/${widget.slug}`}
                     className="flex items-center space-x-2 text-white hover:text-blue-300 text-sm"
                   >
                     <span className="text-blue-400"><Funnel size={16} /></span>
-                    <span className="text-white">заявки</span>
+                    <span className="text-white">{t("dashboardLeads")}</span>
                   </a>
                   <a
                     onClick={() => handleOpenSettings(widget.id)}
                     className="flex items-center space-x-2 text-green-400 hover:text-green-300 text-sm"
                   >
                     <span className="text-blue-400"><Settings size={16} /></span>
-                    <span className="text-white">Налаштування</span>
+                    <span className="text-white">{t("dashboardSettings")}</span>
                   </a>
                 </div>
               </li>

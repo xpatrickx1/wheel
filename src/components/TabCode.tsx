@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { WidgetSettings } from "../lib/defaultSettings";
 import { Help } from "../ui/help";
+import { useTranslation } from 'react-i18next';
 
 export const TabCode = ({ 
   onUpdate,
@@ -12,6 +13,8 @@ export const TabCode = ({
   slug: string
  }) => {
   const [initialSettings, setSettings] = useState<WidgetSettings>(settings);
+
+  const { t } = useTranslation();
 
   const handleChange = (field: keyof WidgetSettings, value: string | number) => {
     setSettings({ ...initialSettings, [field]: value });
@@ -32,9 +35,9 @@ export const TabCode = ({
 
   return (
     <div className="">
-      <div className="modal_p text-left">Код віджета</div>
+      <div className="modal_p text-left">{t("tabCode")}</div>
       <Help>
-        Добавьте этот код на сайт перед тегом &#60;/body&#62;
+        {t("tabCodeInfo")}
       </Help>
       <textarea
         value={generateEmbedCode(slug)}
@@ -44,9 +47,9 @@ export const TabCode = ({
         style={{ color: '#DDE2F4' }}
       />
       
-      <div className="modal_p text-left">Прямая ссылка на виджет</div>
+      <div className="modal_p text-left">{t("tabCodeLink")}</div>
       <Help>
-        Если не требуется подключение виджета к сайту
+        {t("tabCodeLinkInfo")}
       </Help>
       <input
         type="text"

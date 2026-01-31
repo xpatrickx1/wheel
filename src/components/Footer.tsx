@@ -1,10 +1,19 @@
 import React from 'react';
-import { footerLinks } from '../data/footer';
-import logo from "../assets/img/logo-footer.svg"; 
+import { useTranslation } from 'react-i18next';
+
+import logo from "../assets/img/logo-footer.svg";
+
+
 export function Footer() {
+  const { t } = useTranslation();
+  const footerLinks: FooterLink[] = [
+    { id: 'consent', text: `${t('footerPersonalLink')}`, href: 'rules/consent'},
+    { id: 'policy', text: `${t('footerPolicyLink')}`, href: 'rules/politika'},
+    { id: 'offer', text: `${t('footerAgreementLink')}`, href: 'rules/oferta' },
+  ]
   return (
     <div>
-      <div className="bg-[#242424] flex max-w-9xl mx-auto justify-between w-full text-center p-8 pb-11 mt-[100px]">
+      <div className="bg-[#242424] flex flex-col sm:flex-row max-w-9xl gap-8 items-center mx-auto justify-between w-full text-center p-8 pb-11 mt-[100px]">
         <div className="flex flex-col items-start">
           {footerLinks.map((link) => (
             <React.Fragment key={link.id}>

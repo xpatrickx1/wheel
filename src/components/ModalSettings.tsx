@@ -9,6 +9,7 @@ import { Tabs } from "../ui/tabs";
 import { TabsList } from "../ui/tabs";
 import { TabsTrigger } from "../ui/tabs";
 import { TabsContent } from "../ui/tabs";
+import { useTranslation } from 'react-i18next';
 
 export const ModalSettings = ({
   onSave,
@@ -31,6 +32,7 @@ export const ModalSettings = ({
     setSettings((prev) => ({ ...prev, ...updatedSettings }));
   };
 
+  const { t } = useTranslation();
   const handleSubmit = async () => {
     try {
       const { error } = await supabase
@@ -60,7 +62,7 @@ export const ModalSettings = ({
         </div>
 
         {/* Заголовок */}
-        <h2 className="text-2xl font-bold mb-4 text-center">Настройки</h2>
+        <h2 className="text-2xl font-bold mb-4 text-center">{t("settingsTitle")}</h2>
 
         {/* Таби */}
         <Tabs className="w-full mb-4">
@@ -70,28 +72,28 @@ export const ModalSettings = ({
               isActive={activeTab === "main"}
               onClick={() => setActiveTab("main")}
             >
-              основные
+              {t("settingsTabMain")}
             </TabsTrigger>
             <TabsTrigger
               value="bonus"
               isActive={activeTab === "bonus"}
               onClick={() => setActiveTab("bonus")}
             >
-              бонусы
+              {t("settingsTabBonuses")}
             </TabsTrigger>
             <TabsTrigger
               value="integrations"
               isActive={activeTab === "integrations"}
               onClick={() => setActiveTab("integrations")}
             >
-              интеграции
+              {t("settingsTabIntegrations")}
             </TabsTrigger>
             <TabsTrigger
               value="code"
               isActive={activeTab === "code"}
               onClick={() => setActiveTab("code")}
             >
-              код
+              {t("settingsTabCode")}
             </TabsTrigger>
           </TabsList>
         </Tabs>
@@ -137,7 +139,7 @@ export const ModalSettings = ({
           onClick={handleSubmit}
           className="button__main fixed bottom-20 m-auto w-fit bg-blue-600 hover:bg-blue-700 text-white font-bold -translate-x-1/2 left-1/2  uppercase"
         >
-          Зберегти
+          {t("settingsSave")}
         </button>
         )}
       </div>

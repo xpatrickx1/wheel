@@ -1,6 +1,6 @@
 // src/components/HowItWorks.tsx
 import React from "react";
-import { useTranslation, Trans } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import integrationImg from "../assets/img/integrationImg.png";
 
 export function Integration() {
@@ -9,14 +9,6 @@ export function Integration() {
   return (
     <section className="pt-18">
       <div className="max-w-[1582px] mx-auto px-4">
-        <h2 className="text-center text-2xl md:text-3xl font-semibold mb-15">
-          <Trans
-            i18nKey="integrationBlockTitle"
-            components={{
-              highlight1: <span className="text-[#046EF1]" />,
-            }}
-          />
-        </h2>
 
         <div className="relative max-w-[97%] md:max-w-[92%] xl:max-w-7xl md:mx-auto mt-[80px] mb-[107px]">
           <div className="relative overflow-hidden z-1 w-full gap-12 xl:gap-6 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-500 text-white flex flex-col-reverse xl:flex-row items-center justify-between px-6 xl:px-0 xl:pr-18 py-7 md:py-14">
@@ -28,18 +20,19 @@ export function Integration() {
             
             <div className="xl:w-2xl space-y-4 z-10">
               <h2 className="text-2xl xl:text-4xl font-semibold">{t('integrationBannerTitle')}</h2>
-              <p className="text-[#F9F9F9] text-md xl:text-xl leading-relaxed">
+              <p className="text-[#F9F9F9] text-md xl:text-xl leading-relaxed opacity-80">
                 {t('integrationBannerSubtitle')}
               </p>
-              <p className="text-[#F9F9F9] text-xl leading-relaxed">
+              <p className="text-[#F9F9F9] text-xl leading-relaxed opacity-80">
                 {t('integrationBannerListTitle')}
               </p>
-              <ul className="flex flex-col md:flex pl-4 list-disc">
+              <ul className="flex gap-5 flex-col sm:flex-row">
               {integrations.map((integration, index) => (
                 <li
                   key={index}
                   className=""
                 >
+                  <span className="mr-1">✅</span> 
                   {t(integration.text)}
                 </li>
               ))}

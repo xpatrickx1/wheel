@@ -1,0 +1,43 @@
+/* Додайте в ваш глобальний CSS файл або в WheelWidget компонент */
+.wheel-widget-container {
+    position: fixed !important;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    width: 550px;
+    height: 550px;
+    max-width: 90vw;
+    max-height: 90vh;
+  }
+  
+  @media (max-width: 768px) {
+    .wheel-widget-container {
+      width: 400px;
+      height: 400px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .wheel-widget-container {
+      width: 300px;
+      height: 300px;
+      bottom: 10px;
+      right: 10px;
+    }
+  }
+  
+  /* Анімація появи */
+  @keyframes wheelFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  
+  .widget-wheel-wrap {
+    animation: wheelFadeIn 0.3s ease-out;
+  }

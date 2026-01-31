@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { WidgetSettings } from "../lib/defaultSettings";
 import { Help } from "../ui/help";
+import { useTranslation } from 'react-i18next';
 
 export const TabIntegrations = ({ 
   onUpdate,
@@ -16,18 +17,19 @@ export const TabIntegrations = ({
     onUpdate({ ...initialSettings, integrations: { ...initialSettings.integrations, [field]: value } });
   };
 
-
+  const { t } = useTranslation();
+  
   return (
     <div className="">
       <div className="modal_p">Telegram</div>
       <Help>
-        Новые заявки будут приходить в Telegram
+        {t("tabIntegrationsTelegram")}
       </Help>
       <Help>
-        Чтобы привязать личный аккаунт, откройте бота @wheelee_bot. Нажмите кнопку «start» и укажите ваш ID в поле ниже.
+        {t("tabIntegrationsTelegramInfo")}
       </Help>
       <Help>
-        Если вы хотите создать чат из нескольких человек с оповещением о новых заявках, необходимо создать чат, добавить в него участников, а затем подключить туда бота @wheelee_bot и отправить команду /start. Затем укажите укажите ID с отрицательным значением в поле ниже. Пример: -23288472294
+      {t("tabIntegrationsTelegramDescription")}
       </Help>
       <input
         type="text"
@@ -38,26 +40,26 @@ export const TabIntegrations = ({
       />
       <div className="modal_p">Google Analytics</div>
       <Help>
-        Мы отправляем цели wheelee_open при открытии виджета и wheelee_send при отправке заявки. В Google Analytics перейдите в раздел «Администратор» → «Ресурс» → «Ассистент настройки» → «Установка тега», кликнуть на поток и скопировать «Идентификатор потока данных». Он должен быть примерно такого вида: G-5KHNSWDHJK
+        {t("tabIntegrationsGoogleDescription")}
       </Help>
       <input
         type="text"
         value={settings.integrations.googleAnalytics}
         onChange={(e) => handleChange("googleAnalytics", e.target.value)}
         className="w-full mb-4 p-2 rounded bg-[#2b2f45]"
-        placeholder="Идентификатор потока данных"
+        placeholder={t("tabIntegrationsGooglePlaceholder")}
       />
       
-      <div className="modal_p">Внешний URL</div>
+      <div className="modal_p">{t("tabIntegrationsUrlTitle")}</div>
       <Help>
-        На указанный URL придёт POST запрос с данными: name - название виджета, lead - контакт, bonus - выигранный приз, time - время выигрыша.
+        {t("tabIntegrationsUrlInfo")}
       </Help>
       <input
         type="text"
         value={settings.integrations.externalUrl}
         onChange={(e) => handleChange("externalUrl", e.target.value)}
         className="w-full mb-4 p-2 rounded bg-[#2b2f45]"
-        placeholder="Укажите URL"
+        placeholder={t("tabIntegrationsUrlPlaceholder")}
       />
     </div>
   );

@@ -1,6 +1,7 @@
 import React from "react";
 import { WidgetSettings } from "../lib/defaultSettings";
 import { Help } from "../ui/help";
+import { useTranslation } from "react-i18next";
 
 export const TabBonus = ({
   onUpdate,
@@ -16,9 +17,11 @@ export const TabBonus = ({
     onUpdate({ bonuses: newBonuses });
   };
 
+  const { t } = useTranslation();
+
   return (
     <div className="p-4">
-      <Help>Укажите от одного до восьми бонусов</Help>
+      <Help>{t("tabBonusInfo")}</Help>
       {settings.bonuses.map((bonus, i) => (
         <div key={i} className="mb-4">
           <label className="block mb-2 text-left">Бонус #{i + 1}</label>
@@ -38,7 +41,7 @@ export const TabBonus = ({
               />
               <div className={`peer-checked relative w-5 h-5 border-2 border-gray-500 bg-gray-700 peer-checked:border-blue-500 peer-checked:bg-blue-500 transition-colors duration-200 ease-in-out ${bonus.is_participating ? 'peer-checked checked' : ''}`}></div>
             </label>
-            <label className="ml-2 text-xs text-white">Участвует в розыгрыше</label>
+            <label className="ml-2 text-xs text-white">{t("tabBonusParticipate")}</label>
           </div>
         </div>
       ))}

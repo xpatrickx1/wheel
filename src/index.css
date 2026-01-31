@@ -375,6 +375,29 @@ ease-out;
   position: relative;
 }
 
+#wheel-wrap {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: #212230;
+  position: fixed;
+  height: 100vh;
+  width: 70%;
+  left: 0;
+  top: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease; 
+  opacity: 1;
+  transform: translateX(-100%);
+  z-index: 1050;
+}
+
+#wheel-wrap.active {
+  opacity: 1;
+  transform: translateX(0);
+  display: flex;
+  z-index: 1050;
+}
+
 #wheelee-container canvas {
   position: absolute;
   left: -275px;
@@ -393,11 +416,18 @@ ease-out;
 
 
 body {
-  background-color: #222;
   height: 100vh;
 }
 
-
+#root > div {
+  height: 100vh;
+}
+#root .theme-light {
+  background-color: #fff;
+}
+#root .theme-dark {
+  background-color: #222;
+}
 
 
 #pulse-loader .pulse-loader-1,
@@ -416,7 +446,7 @@ body {
 }
 
 #pulse-loader {
-  top: 25%
+  top: 30%
 }
 
 #pulse-loader>div {
@@ -452,29 +482,27 @@ body {
   }
 }
 
-/* .widget-open-btn {
-  position: fixed;
-  z-index: 999997;
-  width: 100px;
-  height: 100px;
-  cursor: pointer;
-  left: 10px;
-  bottom: -30px;
-  background: url(https://ptulighepuqttsocdovp.supabase.co/storage/v1/object/public/wheelee/gift.png) center center no-repeat;
-  background-size: contain;
-  transform-origin: right bottom;
-  outline: 0;
-  animation: shakeBox 0.12s infinity 0s 2;
+#page-wheel-widget .widget-wheel-wrap {
+  position: initial;
+  opacity: 1;
+  transform: translateX(0);
+  width: 100%;
+  max-width: 1000px;
+  background: #262635;
+  height: 100vh;
+  margin: 0 auto;
+  overflow: hidden;
 }
 
-@keyframes shakeBox {
-  0% {
-      transform: rotate(0deg);
-  }
-  50% {
-      transform: rotate(-6deg);
-  }
-  100% {
-      transform: rotate(0deg);
-  }
-} */
+.wheel-widget-container {
+  width: 100%;
+}
+
+.main-wheel-widget {
+  width: 100%;
+  max-width: 1000px;
+}
+
+#page-wheel-widget .widget-close-btn {
+  display: none;
+}

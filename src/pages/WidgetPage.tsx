@@ -1,8 +1,7 @@
 import { useParams } from "react-router-dom";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { supabase } from "../lib/supabaseClient";
-import createWheel from '../lib/wheelee-home';
-
+import WheelWidget from '../components/WheelWidget';
 interface WidgetData {
   id: string;
   slug: string;
@@ -10,14 +9,52 @@ interface WidgetData {
   settings: any;
 }
 
-// const WHEELE_URL = "https://ptulighepuqttsocdovp.supabase.co/storage/v1/object/public/wheelee/wheelee-min.js";
-const WHEELE_URL = "https://ptulighepuqttsocdovp.supabase.co/storage/v1/object/public/wheelee/wheelee.js";
-
 export default function WidgetPage() {
   const { slug } = useParams<{ slug: string }>();
   const [widget, setWidget] = useState<WidgetData | null>(null);
   const [loading, setLoading] = useState(true);
-  const scriptRef = useRef<HTMLScriptElement | null>(null);
+  const buttonRemovedRef = useRef(false);
+
+  const removeOpenButtons = useCallback(() => {
+    if (buttonRemovedRef.current) return;
+    
+    const observer = new MutationObserver(() => {
+      const buttons = document.querySelectorAll('.widget-open-btn');
+      if (buttons.length > 0) {
+        buttons.forEach(button => {
+          button.remove();
+          console.log('Widget open button removed from preview');
+        });
+        buttonRemovedRef.current = true;
+        observer.disconnect();
+      }
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    removeOpenButtons();
+    
+    // Також перевіряємо при кожній зміні DOM
+    const checkInterval = setInterval(() => {
+      if (!buttonRemovedRef.current) {
+        const buttons = document.querySelectorAll('.widget-open-btn');
+        if (buttons.length > 0) {
+          buttons.forEach(button => button.remove());
+          buttonRemovedRef.current = true;
+        }
+      }
+    }, 500);
+
+    return () => clearInterval(checkInterval);
+  }, [removeOpenButtons]);
+
 
   useEffect(() => {
     async function loadSettings() {
@@ -44,52 +81,25 @@ export default function WidgetPage() {
         setLoading(false);
       }
     }
-
     loadSettings();
-    console.log('widget', widget)
   }, [slug]);
-
-  useEffect(() => {
-    if (!widget?.id) return;
-
-    // Передаємо id (UUID) у window.wheeleeKey
-    (window as any).wheeleeSlug = widget.slug;
-
-    if (scriptRef.current) {
-      document.head.removeChild(scriptRef.current);
-      scriptRef.current = null;
-    }
-
-    createWheel("wheelee-container", widget.settings)
-    const script = document.createElement("script");
-    // script.src = `${WHEELE_URL}?${Date.now()}`; // Кеш-бастинг
-    script.async = true;
-
-    script.onload = () => {
-      console.log(`Widget script loaded for id: ${widget.id}`);
-      delete (window as any).wheeleeKey;
-    };
-    script.onerror = () => console.error(`Failed to load widget script for id: ${widget.id}`);
-
-    scriptRef.current = script;
-    document.head.appendChild(script);
-
-    return () => {
-      if (scriptRef.current) {
-        document.head.removeChild(scriptRef.current);
-        scriptRef.current = null;
-      }
-      delete (window as any).wheeleeKey;
-    };
-  }, [widget?.id]);
 
   if (loading) return <p className="text-white">Завантаження...</p>;
   if (!widget) return <p className="text-red-500">Віджет не знайдено</p>;
 
   return (
     <div>
-      {/* <h1 className="text-xl font-bold text-white">{widget.name}</h1> */}
-      <div id="wheelee-container" className="flex justify-center items-center align-middle mx-auto bg-[#262635] w-full h-[100vh] max-w-[1000px]"/>
+      <div className="bg-[#1d1d27]">
+      <div id="wheelee-container" className="flex justify-center items-center align-middle mx-auto bg-[#262635] w-full h-[100vh] max-w-[1000px]">
+        {widget.settings && (
+          <WheelWidget 
+            options={widget.settings}
+            containerId="page-wheel-widget"
+          />
+        )}
+      </div>
+      </div>
     </div>
+    
   );
 }
