@@ -398,11 +398,6 @@ ease-out;
   z-index: 1050;
 }
 
-#wheelee-container canvas {
-  position: absolute;
-  left: -275px;
-}
-
 .wheel-form {
   position: absolute;
   left: 325px;
@@ -504,5 +499,16 @@ body {
 }
 
 #page-wheel-widget .widget-close-btn {
+  display: none;
+}
+
+.widget-page .widget-wheel-wrap._hidden, .widget-page .widget-wheel-wrap {
+  opacity: 1;
+  transform: translateX(0);
+  position: relative;
+  width: 100%;
+}
+
+.widget-page .widget-close-btn {
   display: none;
 }

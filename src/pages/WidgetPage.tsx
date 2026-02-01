@@ -89,15 +89,15 @@ export default function WidgetPage() {
 
   return (
     <div>
-      <div className="bg-[#1d1d27]">
-      <div id="wheelee-container" className="flex justify-center items-center align-middle mx-auto bg-[#262635] w-full h-[100vh] max-w-[1000px]">
+      <div className="bg-[#1d1d27] widget-page">
+      <div id="wheelee-container" className="flex justify-center items-center align-middle mx-auto bg-[#262635] w-full h-[100vh] max-w-[1000px]"/>
         {widget.settings && (
           <WheelWidget 
             options={widget.settings}
-            containerId="page-wheel-widget"
+            // containerId="page-wheel-widget"
           />
         )}
-      </div>
+      {/* </div> */}
       </div>
     </div>
     

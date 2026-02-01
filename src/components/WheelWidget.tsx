@@ -25,7 +25,7 @@ const WheelWidget = ({ options, containerId = "wheel-container", isPreview = fal
   return (
     <div 
       ref={wheelRef} 
-      id={containerId}
+      // id={containerId}
       className="wheel-widget-container"
       style={{
 

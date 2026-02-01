@@ -9,7 +9,7 @@ export function useWheel(options) {
     if (!containerRef.current || wheelInstanceRef.current) return;
 
     try {
-      wheelInstanceRef.current = createWheel(containerRef.current.id, options);
+      wheelInstanceRef.current = createWheel(options);
     } catch (error) {
       console.error('Failed to initialize wheel:', error);
     }

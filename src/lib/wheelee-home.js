@@ -437,7 +437,7 @@
                   background-size: contain;
                   transform-origin: right bottom;
                   outline: 0;
-                  animation: shakeBox 0.12s infinity 0s 2;
+                  animation: shakeBox 0.12s infinite 0s 2;
                   transition: all 0.4s ease;
                 }
 

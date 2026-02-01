@@ -11,7 +11,8 @@ export default defineConfig({
     outDir: "dist-embed",
     emptyOutDir: true,
     sourcemap: false,
-    minify: "terser",
+    // minify: "terser",
+    minify: false,
     rollupOptions: {
       output: {
         inlineDynamicImports: true,

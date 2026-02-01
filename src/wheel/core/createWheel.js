@@ -1,5 +1,5 @@
 
-export default  function createWheel(containerId, options) {
+export default  function createWheel( options ) {
   const API_BASE = "https://ptulighepuqttsocdovp.supabase.co";
   let widgetId;
 
@@ -56,7 +56,7 @@ export default  function createWheel(containerId, options) {
   const { bonuses, color, buttonText, collectData, showOpenButton = true  } = options;
   const baseColor = color || '#eb112a';
   const darkerColor = darkenColor(baseColor, 20);
-  const container = document.getElementById(containerId)
+  const container = document.getElementById('wheelee-container') || document.body;
   if (!container) return;
 
   const existingWheel = document.querySelector('.widget-wheel-wrap');
@@ -110,22 +110,20 @@ export default  function createWheel(containerId, options) {
 
   function updateScreenWidth() {
     const screenWidth = window.innerWidth;
-    console.log("Current width:", screenWidth);
-  
-    // приклад: адаптивна логіка
     size = screenWidth <= 550 ? screenWidth : 550;
     canvas.width = size;
     canvas.height = size;
-    console.log(size)
     drawWheel()
   }
+
+  
     
   const maxSize = 550;
   const screenWidth = window.innerWidth;
   let size = Math.min(screenWidth, maxSize);
   canvas.width = size;
   canvas.height = size;
-  
+
   wheelWrap.appendChild(canvas);
   wheelWrap.appendChild(wheelForm);
 
@@ -157,7 +155,7 @@ export default  function createWheel(containerId, options) {
               transition: opacity 0.3s ease, transform 0.3s ease; 
               opacity: 1;
               transform: translateX(-100%);
-              z-index: 100;
+              z-index: 1000;
           }
             .widget-wheel-wrap._hidden {
             opacity: 0; 
@@ -168,7 +166,12 @@ export default  function createWheel(containerId, options) {
               opacity: 1;
               transform: translateX(0);
           }
-
+          @media (max-width: 767px) {
+            .widget-wheel-wrap {
+              flex-direction: column;
+              width: 100%;
+            }
+          }
           .widget-wheel-wrap canvas {
             position: absolute;
             left: -275px;
@@ -256,7 +259,7 @@ export default  function createWheel(containerId, options) {
               align-items: flex-start;
               max-width: 400px;
           }
-          .wheel-form-home {
+          .wheel-form {
             position: absolute;
             left: 325px;
           }
@@ -426,11 +429,10 @@ export default  function createWheel(containerId, options) {
               flex-direction: column;
             }
 
-            #wheelee-container canvas {
+            .widget-wheel-wrap canvas {
               position: absolute;
               top: -${size / 2}px;
-              left: 50%;
-              transform: translateX(-50%) rotate(90deg) scale(0.7);
+              transform: translateX(-50%) rotate(90deg) scale(0.9);
               left: 50%;
             }
 
@@ -457,7 +459,7 @@ export default  function createWheel(containerId, options) {
               background-size: contain;
               transform-origin: right bottom;
               outline: 0;
-              animation: shakeBox 0.12s infinity 0s 2;
+              animation: shakeBox 2.5s infinite;
               transition: all 0.4s ease;
             }
 
@@ -503,7 +505,6 @@ export default  function createWheel(containerId, options) {
     const rotationSpeed = speed;
     
     function animateIdle(timestamp) {
-      // Якщо колесо крутиться - зупинити анімацію
       if (spinning) {
         if (idleAnimationId) {
           cancelAnimationFrame(idleAnimationId);
@@ -512,17 +513,14 @@ export default  function createWheel(containerId, options) {
         return;
       }
       
-      // Обчислення deltaTime для стабільної швидкості
       const deltaTime = lastTimestamp ? timestamp - lastTimestamp : 0;
       lastTimestamp = timestamp;
       
-      // Обертання з урахуванням дельта часу
-      rotation += rotationSpeed * (deltaTime / 16.67); // 16.67ms ≈ 60fps
-      rotation = rotation % TWO_PI; // Нормалізація
+      rotation += rotationSpeed * (deltaTime / 16.67);
+      rotation = rotation % TWO_PI; 
       
       drawWheel();
       
-      // Продовжуємо анімацію тільки якщо не spinning
       if (!spinning) {
         idleAnimationId = requestAnimationFrame(animateIdle);
       }
@@ -747,10 +745,9 @@ export default  function createWheel(containerId, options) {
               const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
               isInputValid = emailRegex.test(input.value.trim());
           } else if (collectData === "tel") {
-              const telRegex = /^\+?[0-9]{7,15}$/; // телефон з 7–15 цифр, опціонально з "+"
+              const telRegex = /^\+38\s?\(\d{3}\)\s?\d{3}-\d{2}-\d{3}$/;
               isInputValid = telRegex.test(input.value.trim());
           }
-
           
           if (!isInputValid) {
               input.classList.add("error");
@@ -778,7 +775,6 @@ export default  function createWheel(containerId, options) {
 
         input.addEventListener("blur", validateInput);
   
-        // чекбокс
         const divCheckWrap = document.createElement("div");
         divCheckWrap.className = "checkbox-wrap";
   
@@ -816,7 +812,6 @@ export default  function createWheel(containerId, options) {
         divCheckWrap.appendChild(divCheck);
         divCheckWrap.appendChild(policyText);
   
-        // кнопка
         const btn = document.createElement("button");
         btn.id = "spin_button";
         btn.textContent = buttonText;
@@ -840,12 +835,11 @@ export default  function createWheel(containerId, options) {
         wrap.appendChild(form);
         wheelForm.appendChild(wrap);
       } else {
-        // Екран з результатом
         const prizeText = document.createElement("div");
         prizeText.className = "widget-prize-title";
         prizeText.textContent = prize;
         
-        showLightweightConfetti();
+        showConfetti();
   
         const msg = document.createElement("div");
         msg.className = "widget-prize-text";
@@ -857,189 +851,183 @@ export default  function createWheel(containerId, options) {
     }
   }
 
-  function showLightweightConfetti() {
-    const baseColor = options.color || '#eb112a';
-    
-    function generateColorVariations(hex) {
-      const colors = [];
-      for (let i = 0; i < 3; i++) {
-        const r = parseInt(hex.slice(1, 3), 16);
-        const g = parseInt(hex.slice(3, 5), 16);
-        const b = parseInt(hex.slice(5, 7), 16);
-        
-        const factor = 0.7 + (i * 0.15);
-        colors.push(
-          `#${Math.round(r * factor).toString(16).padStart(2, '0')}` +
-          `${Math.round(g * factor).toString(16).padStart(2, '0')}` +
-          `${Math.round(b * factor).toString(16).padStart(2, '0')}`
-        );
-      }
-      return colors;
-    }
-    
-    const colors = generateColorVariations(baseColor);
-    
+  function showConfetti() {
+    const palette = [
+      '#ff0000', '#ff8800', '#ffff00', '#44ff44',
+      '#0088ff', '#aa00ff', '#ff44aa', '#ffcc66',
+      '#ffffff', '#ff6699', '#00ffcc', '#9966ff'
+    ];
+  
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-    const particles = [];
-    const particleCount = 80;
-    
+  
     canvas.style.cssText = `
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 9999;
+      position: absolute; inset: 0; 
+      pointer-events: none; z-index: 9999;
+      width: 100%; height: 100%;
     `;
-    
-    const container = document.getElementById(containerId);
-    if (container) {
-      container.appendChild(canvas);
-    } else {
-      document.body.appendChild(canvas);
-    }
-    
-    canvas.width = canvas.offsetWidth;
+  
+    const container = document.getElementById('wheelee-container') || document.body;
+    container.appendChild(canvas);
+  
+    canvas.width  = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
-    
-    for (let i = 0; i < particleCount; i++) {
+  
+    const particles = [];
+  
+    for (let i = 0; i < 180; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 3 + Math.random() * 11;          
+      const velX  = Math.cos(angle) * speed;
+      const velY  = Math.sin(angle) * speed - 8;     
+  
       particles.push({
-        x: canvas.width / 2,
-        y: canvas.height / 2,
-        size: Math.random() * 8 + 4,
-        speedX: Math.random() * 8 - 4,
-        speedY: Math.random() * -10 - 2,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        life: 150 + Math.random() * 100
+        x: canvas.width  * (0.3 + Math.random() * 0.4),   
+        y: canvas.height * (0.4 + Math.random() * 0.3),
+        size: 3 + Math.random() * 14,                    
+        vx: velX,
+        vy: velY,
+        color: palette[Math.floor(Math.random() * palette.length)],
+        rotation: Math.random() * 360,
+        rotSpeed: (Math.random() - 0.5) * 12,
+        life: 90 + Math.random() * 140,                   
+        alpha: 1
       });
     }
-    
-    function animateConfetti() {
+  
+    function animate() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
+  
       let alive = false;
-      
+  
       for (const p of particles) {
-        p.x += p.speedX;
-        p.y += p.speedY;
-        p.speedY += 0.1;
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.18;               
+        p.vx *= 0.98;               
+        p.rotation += p.rotSpeed;
         p.life--;
-        
-        if (p.life > 0) {
+        p.alpha = Math.max(0, p.life / 100);
+  
+        if (p.life > 0 && p.y < canvas.height + 50) {
           alive = true;
-          
+  
           ctx.save();
-          ctx.globalAlpha = p.life / 250;
+          ctx.globalAlpha = p.alpha * 0.9;
           ctx.fillStyle = p.color;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-          ctx.fill();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rotation * Math.PI / 180);
+  
+          const w = p.size * 0.6;
+          const h = p.size * 1.6;
+          ctx.fillRect(-w/2, -h/2, w, h);
+  
           ctx.restore();
         }
       }
-      
+  
       if (alive) {
-        requestAnimationFrame(animateConfetti);
+        requestAnimationFrame(animate);
       } else {
         canvas.remove();
       }
     }
-    
-    animateConfetti();
+  
+    animate();
   }
 
   render();
   drawWheel();
   startIdleRotation();
   
+  function handleWindowResize() {
+    updateScreenWidth()
+  }
 
+  window.addEventListener("resize", handleWindowResize);
 
+  updateScreenWidth()
   
-const formsTel = document.querySelectorAll('.form-input[type="tel"]');
+  const formsTel = document.querySelectorAll('.form-input[type="tel"]');
 
-formsTel.forEach(input => {
-    input.addEventListener('input', () => {
-        const rawValue = input.value;
-        let digits = getCleanDigits(rawValue);
+  formsTel.forEach(input => {
+      input.addEventListener('input', () => {
+          const rawValue = input.value;
+          let digits = getCleanDigits(rawValue);
 
-        if (digits.length === 0) {
-            input.value = '';
-            return;
-        }
-	
-        const formatted = formatPhone(digits);
-        input.value = formatted;
-        setCursorPosition(input, formatted.length);
-    });
-});
-
-const maxDigits = 12;
-
-function getCleanDigits(str) {
-    let cleaned = str.replace(/[^\d+]/g, '');
-    if (cleaned.startsWith('+')) {
-        return '+' + cleaned.slice(1).replace(/\D/g, '');
-    }
-    return cleaned.replace(/\D/g, '');
-}
-
-function normalizePhone(digits) {
-
-    if (digits.startsWith('8')) {
-        if (digits.length === 1) {
-            digits = '38';
-        } else {
-            const second = digits[1];
-            if (second === '0') {
-                digits = '380' + digits.slice(2); 
-            } else {
-                digits = '380' + '0' + digits.slice(1);
-            }
-        }
-    } else if (digits.startsWith('0')) {
-        digits = '380' + digits.slice(1);
-    } else if (digits.startsWith('3')) {
-        if (digits.length === 1) {
-            return digits;
-        } else if (digits[1] !== '8' && digits[1] !== '0') {
-            digits = '380' + digits.slice(1);
-        } else if (digits[1] == '0' && digits[1] !== '8') {
-            digits = '380';
-        } else if (digits[2] !== '0' && digits[1] !== '8') {
-            digits = '380' + digits.slice(2);
-        } else if (digits.length === 3 && digits[2] !== '0') {
-            digits = '380' + digits.slice(2);
-        }
-    } else {
-        digits = '380' + digits;
-    }
+          if (digits.length === 0) {
+              input.value = '';
+              return;
+          }
     
-    return digits.substring(0, maxDigits);
-}
-    
-    
-function formatPhone(digits) {
-    if (digits === '+') return '+';
-    let val = normalizePhone(digits.replace(/\D/g, ''));
-    let result = '+';
-    if (val.length > 0) result += val.substring(0, 2);             // +38
-    if (val.length >= 3) result += ' (' + val.substring(2, 5);     // +38 (0XX
-    if (val.length >= 6) result += ') ' + val.substring(5, 8);     // +38 (0XX) XXX
-    if (val.length >= 9) result += '-' + val.substring(8, 10);     // +38 (0XX) XXX-XX
-    if (val.length >= 11) result += '-' + val.substring(10, 12);   // +38 (0XX) XXX-XX-XX
+          const formatted = formatPhone(digits);
+          input.value = formatted;
+          setCursorPosition(input, formatted.length);
+      });
+  });
 
-    return result;
-}
+  const maxDigits = 12;
 
-function setCursorPosition(el, pos) {
-    window.requestAnimationFrame(() => {
-        el.setSelectionRange(pos, pos);
-    });
-}
+  function getCleanDigits(str) {
+      let cleaned = str.replace(/[^\d+]/g, '');
+      if (cleaned.startsWith('+')) {
+          return '+' + cleaned.slice(1).replace(/\D/g, '');
+      }
+      return cleaned.replace(/\D/g, '');
+  }
 
+  function normalizePhone(digits) {
 
+      if (digits.startsWith('8')) {
+          if (digits.length === 1) {
+              digits = '38';
+          } else {
+              const second = digits[1];
+              if (second === '0') {
+                  digits = '380' + digits.slice(2); 
+              } else {
+                  digits = '380' + '0' + digits.slice(1);
+              }
+          }
+      } else if (digits.startsWith('0')) {
+          digits = '380' + digits.slice(1);
+      } else if (digits.startsWith('3')) {
+          if (digits.length === 1) {
+              return digits;
+          } else if (digits[1] !== '8' && digits[1] !== '0') {
+              digits = '380' + digits.slice(1);
+          } else if (digits[1] == '0' && digits[1] !== '8') {
+              digits = '380';
+          } else if (digits[2] !== '0' && digits[1] !== '8') {
+              digits = '380' + digits.slice(2);
+          } else if (digits.length === 3 && digits[2] !== '0') {
+              digits = '380' + digits.slice(2);
+          }
+      } else {
+          digits = '380' + digits;
+      }
+      
+      return digits.substring(0, maxDigits);
+  }
+      
+  function formatPhone(digits) {
+      if (digits === '+') return '+';
+      let val = normalizePhone(digits.replace(/\D/g, ''));
+      let result = '+';
+      if (val.length > 0) result += val.substring(0, 2);             // +38
+      if (val.length >= 3) result += ' (' + val.substring(2, 5);     // +38 (0XX
+      if (val.length >= 6) result += ') ' + val.substring(5, 8);     // +38 (0XX) XXX
+      if (val.length >= 9) result += '-' + val.substring(8, 10);     // +38 (0XX) XXX-XX
+      if (val.length >= 11) result += '-' + val.substring(10, 12);   // +38 (0XX) XXX-XX-XX
+
+      return result;
+  }
+
+  function setCursorPosition(el, pos) {
+      window.requestAnimationFrame(() => {
+          el.setSelectionRange(pos, pos);
+      });
+  }
 }
 
 
