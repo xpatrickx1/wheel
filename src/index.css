@@ -512,3 +512,7 @@ body {
 .widget-page .widget-close-btn {
   display: none;
 }
+
+.widget-page #close_button {
+  display: none;
+}
