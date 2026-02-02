@@ -141,8 +141,6 @@ export default  function createWheel( options ) {
   const activeBonuses = bonuses.filter(bonus => bonus.is_participating === true);
   const sliceAngle = (2 * Math.PI) / activeBonuses.length;
 
-    
-
   if (!stylesAdded) {
       const styles = document.createElement('style');
       styles.id = 'widget-wheel-styles';
@@ -763,8 +761,22 @@ export default  function createWheel( options ) {
           divInput.appendChild(flagIcon);
         }
 
+        input.addEventListener('input', (e) => {
+          const rawValue = input.value;
+          let digits = getCleanDigits(rawValue);
+
+          if (digits.length === 0) {
+            input.value = '';
+              return;
+          }
+
+          const formatted = formatPhone(digits);
+          input.value = formatted;
+          setCursorPosition(input, formatted.length);
+          contact = e.target.value
+        });
         
-        input.addEventListener("input", e => contact = e.target.value);
+        // input.addEventListener("input", e => contact = e.target.value);
         divInput.appendChild(input);
 
       // Валідація
@@ -860,7 +872,6 @@ export default  function createWheel( options ) {
         form.appendChild(divInput);
         form.appendChild(divCheckWrap);
         form.appendChild(btn);
-  
         wrap.appendChild(form);
         wheelForm.appendChild(wrap);
       } else {
@@ -987,21 +998,6 @@ export default  function createWheel( options ) {
 
   updateScreenWidth()
   
-  const formTel = document.querySelector('.wheel-form .form-input[type="tel"]');
-  formTel.addEventListener('input', () => {
-    const rawValue = formTel.value;
-    let digits = getCleanDigits(rawValue);
-
-    if (digits.length === 0) {
-      formTel.value = '';
-        return;
-    }
-
-    const formatted = formatPhone(digits);
-    formTel.value = formatted;
-    setCursorPosition(formTel, formatted.length);
-  });
-
   const maxDigits = 12;
 
   function getCleanDigits(str) {
