@@ -1,7 +1,6 @@
 
-export default  function createWheel( options ) {
+export default  function createWheel( options, widgetId ) {
   const API_BASE = "https://ptulighepuqttsocdovp.supabase.co";
-  let widgetId;
 
   let stylesAdded = false;
 
@@ -484,7 +483,7 @@ export default  function createWheel( options ) {
 
             .widget-open-btn img {
               width: 100px;
-              height: 100px;
+              height: fit-content;
             }
 
             @keyframes shakeBox {
@@ -513,45 +512,42 @@ export default  function createWheel( options ) {
   let idleAnimationId = null;
   const TWO_PI = 2 * Math.PI; 
 
-  function startIdleRotation(speed = 0.002) {
-    // Якщо анімація вже запущена - зупинити її
-    if (idleAnimationId) {
-      cancelAnimationFrame(idleAnimationId);
-      idleAnimationId = null;
-    }
-    
-    let lastTimestamp = 0;
-    const rotationSpeed = speed;
-    
-    function animateIdle(timestamp) {
-      if (spinning) {
-        if (idleAnimationId) {
-          cancelAnimationFrame(idleAnimationId);
-          idleAnimationId = null;
-        }
-        return;
+  let lastDrawnRotation = -999;     
+  const MIN_ANGLE_CHANGE = 0.003;  
+
+  function startIdleRotation(speed = 0.0002) {  
+      stopIdleRotation();  
+
+      let lastTime = performance.now();
+
+      function tick(now) {
+          if (spinning) {
+              stopIdleRotation();
+              return;
+          }
+
+          const dt = now - lastTime;
+          lastTime = now;
+
+          // накопичуємо кут плавно
+          rotation += speed * dt;           // dt в мілісекундах → природна швидкість
+          rotation = rotation % TWO_PI;
+
+          // малюємо ТІЛЬКИ якщо зміна помітна
+          const angleDiff = Math.abs(rotation - lastDrawnRotation);
+          if (angleDiff >= MIN_ANGLE_CHANGE || angleDiff > Math.PI * 1.9) {  // враховуємо перехід через 2π
+              drawWheel();
+              lastDrawnRotation = rotation;
+          }
+
+          idleAnimationId = requestAnimationFrame(tick);
       }
-      
-      const deltaTime = lastTimestamp ? timestamp - lastTimestamp : 0;
-      lastTimestamp = timestamp;
-      
-      rotation += rotationSpeed * (deltaTime / 16.67);
-      rotation = rotation % TWO_PI; 
-      
-      drawWheel();
-      
-      if (!spinning) {
-        idleAnimationId = requestAnimationFrame(animateIdle);
-      }
-    }
-    
-    idleAnimationId = requestAnimationFrame(animateIdle);
+
+      idleAnimationId = requestAnimationFrame(tick);
   }
   
   function stopIdleRotation() {
-    console.log('idleAnimationId', idleAnimationId)
     if (idleAnimationId) {
-      console.log('idleAnimationId', idleAnimationId)
       cancelAnimationFrame(idleAnimationId);
       idleAnimationId = null;
     }
@@ -786,7 +782,7 @@ export default  function createWheel( options ) {
               const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
               isInputValid = emailRegex.test(input.value.trim());
           } else if (collectData === "tel") {
-              const telRegex = /^\+38\s?\(\d{3}\)\s?\d{3}-\d{2}-\d{3}$/;
+              const telRegex = /^\+38\s*\(\s*0\d{2}\s*\)\s*\d{3}\s*-\s*\d{2}\s*-\s*\d{2}$/;
               isInputValid = telRegex.test(input.value.trim());
           }
           
@@ -988,7 +984,6 @@ export default  function createWheel( options ) {
   
     animate();
   }
-
   
   function handleWindowResize() {
     updateScreenWidth()
