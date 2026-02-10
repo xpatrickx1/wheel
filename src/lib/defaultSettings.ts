@@ -20,6 +20,13 @@ export interface WidgetSettings {
   };
   code: string;
   link: string;
+  position?: PositionSettings;
+}
+
+export interface PositionSettings {
+  vertical: 'top' | 'bottom';
+  horizontal: 'left' | 'right';
+  offset: number;
 }
 
 export const defaultWidgetSettings: WidgetSettings = {

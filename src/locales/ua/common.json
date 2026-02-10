@@ -182,7 +182,22 @@
   "partnershipTarifStandartMonth" : "Тариф Стандарт (місяць)",
   "partnershipTarifExpertMonth" : "Тариф Експерт (місяць)",
   "partnershipTarifExpertYear" : "Тариф Стандарт (рік)",
-  "partnershipTarifStandartYear" : "Тариф Експерт (рік)"
+  "partnershipTarifStandartYear" : "Тариф Експерт (рік)",
+
+  "tabMainButtonPosition": "Позиція кнопки віджета",
+  "tabMainButtonPreview": "Попередній перегляд",
+  "tabMainButtonPreviewInfo": "Перегляньте, як кнопка буде розташована на сторінці",
+  "tabMainVerticalPosition": "Вертикальна позиція",
+  "tabMainVerticalPositionInfo": "Виберіть, зверху чи знизу буде кнопка",
+  "tabMainHorizontalPosition": "Горизонтальна позиція",
+  "tabMainHorizontalPositionInfo": "Виберіть, ліворуч чи праворуч буде кнопка",
+  "tabMainButtonOffset": "Відступ",
+  "tabMainButtonOffsetInfo": "Відстань від краю екрану (в пікселях)",
+  "tabMainPositionPresets": "Швидкі пресети",
+  "tabMainPositionTop": "Зверху",
+  "tabMainPositionBottom": "Знизу",
+  "tabMainPositionLeft": "Ліворуч",
+  "tabMainPositionRight": "Праворуч"
 
 
 }

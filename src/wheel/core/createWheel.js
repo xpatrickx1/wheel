@@ -1069,6 +1069,26 @@ export default  function createWheel( options, widgetId ) {
   render();
   drawWheel();
   startIdleRotation();
+
+  async function testTelegramNotification() {
+    const response = await fetch(`${API_BASE}/functions/v1/save-result`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ widget_id: widgetId })
+      }
+    );
+    const result = await response.json();
+    console.log('test-telegram-notification result', result)
+    
+    if (result.success) {
+      alert('✅ Тестове сповіщення відправлено!');
+    } else {
+      alert(`❌ Помилка: ${result.error || 'Невідома помилка'}`);
+    }
+  }
+
+  testTelegramNotification()
   
 }
 

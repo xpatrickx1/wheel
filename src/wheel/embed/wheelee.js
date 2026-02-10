@@ -28,6 +28,8 @@ import createWheel from "../core/createWheel";
       .catch((err) => console.error("Widget load error:", err));
   }
 
+  
+
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
   } else {

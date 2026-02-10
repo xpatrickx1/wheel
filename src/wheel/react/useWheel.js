@@ -55,6 +55,7 @@ export function useWheel(options) {
       initializeWheel();
     }
   }, [options, destroyWheel, initializeWheel]);
+  
 
   return containerRef;
 }
