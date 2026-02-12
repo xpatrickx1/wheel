@@ -2,13 +2,13 @@
 import React, { useEffect, useRef } from 'react';
 import { useWheel } from "../wheel/react/useWheel";
 
-const WheelWidget = ({ options, containerId = "wheel-container", isPreview = false }) => {
+const WheelWidget = ({ options, isPreview = false, widgetId } ) => {
 //   const wheelRef = useWheel(options);
 
   const wheelRef = useWheel({
     ...options,
     showOpenButton: !isPreview 
-  });
+  }, widgetId);
   useEffect(() => {
     if (!isPreview) return;
     

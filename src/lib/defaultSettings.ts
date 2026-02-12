@@ -53,6 +53,11 @@ export const defaultWidgetSettings: WidgetSettings = {
     telegram: "",
     googleAnalytics: ""
   },
+  position: {
+    offset: -20,
+    vertical: "bottom",
+    horizontal: "left"
+  },
   code: "",
   link: ""
 };

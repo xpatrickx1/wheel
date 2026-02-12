@@ -72,6 +72,7 @@ export default function WidgetPage() {
 
         if (error) throw error;
         if (!data) throw new Error("Widget not found");
+        console.log(data);
         setWidget(data);
         
       } catch (err) {
@@ -94,6 +95,7 @@ export default function WidgetPage() {
         {widget.settings && (
           <WheelWidget 
             options={widget.settings}
+            widgetId={widget.id}
             // containerId="page-wheel-widget"
           />
         )}

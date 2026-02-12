@@ -1,7 +1,7 @@
 
 export default  function createWheel( options, widgetId ) {
   const API_BASE = "https://ptulighepuqttsocdovp.supabase.co";
-
+  console.log('widgetId', widgetId)
   let stylesAdded = false;
 
   function hexToRgb(hex) {
@@ -52,7 +52,7 @@ export default  function createWheel( options, widgetId ) {
     return brightness > 150 ? '#000000' : '#ffffff';
   }
 
-  const { bonuses, color, buttonText, collectData, showOpenButton = true  } = options;
+  const { bonuses, color, buttonText, collectData, showOpenButton = true, position  } = options;
   const baseColor = color || '#eb112a';
   const darkerColor = darkenColor(baseColor, 20);
   const container = document.getElementById('wheelee-container') || document.body;
@@ -471,8 +471,8 @@ export default  function createWheel( options, widgetId ) {
               width: 100px;
               height: 100px;
               cursor: pointer;
-              left: 10px;
-              bottom: -30px;
+              ${position.vertical}: ${position.offset}px;
+              ${position.horizontal}: 10px;
               background-color: transparent; 
               background-size: contain;
               transform-origin: right bottom;
@@ -1069,26 +1069,6 @@ export default  function createWheel( options, widgetId ) {
   render();
   drawWheel();
   startIdleRotation();
-
-  async function testTelegramNotification() {
-    const response = await fetch(`${API_BASE}/functions/v1/save-result`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ widget_id: widgetId })
-      }
-    );
-    const result = await response.json();
-    console.log('test-telegram-notification result', result)
-    
-    if (result.success) {
-      alert('✅ Тестове сповіщення відправлено!');
-    } else {
-      alert(`❌ Помилка: ${result.error || 'Невідома помилка'}`);
-    }
-  }
-
-  testTelegramNotification()
   
 }
 

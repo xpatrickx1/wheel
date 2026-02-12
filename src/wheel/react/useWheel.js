@@ -1,15 +1,16 @@
 import { useEffect, useRef, useCallback } from "react";
 import createWheel from "../core/createWheel";
 
-export function useWheel(options) {
+export function useWheel(options, widgetId) {
   const containerRef = useRef(null);
   const wheelInstanceRef = useRef(null);
-
+  console.log(options);
+  console.log(widgetId);
   const initializeWheel = useCallback(() => {
     if (!containerRef.current || wheelInstanceRef.current) return;
 
     try {
-      wheelInstanceRef.current = createWheel(options);
+      wheelInstanceRef.current = createWheel(options, widgetId);
     } catch (error) {
       console.error('Failed to initialize wheel:', error);
     }

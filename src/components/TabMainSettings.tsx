@@ -282,7 +282,7 @@ export const TabMainSettings = ({
               <div className="flex items-center gap-4">
                 <input
                   type="range"
-                  min="-30"
+                  min="-20"
                   max="100"
                   step="5"
                   value={positionSettings.offset}
